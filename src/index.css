@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+@theme {
+  --font-heading: "Playfair Display", serif;
+  --font-body: "Inter", sans-serif;
+
+  --color-primary-black: #0A0A0A;
+  --color-pure-white: #FFFFFF;
+  --color-light-gray: #F7F7F7;
+  --color-medium-gray: #666666;
+  --color-border-gray: #E5E5E5;
+
+  --max-width-content: 1200px;
+}
+
+@layer base {
+  body {
+    @apply font-body bg-pure-white text-primary-black antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading;
+  }
+
+  /* Smooth scroll for anchor links */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  @keyframes slow-zoom {
+    from { transform: scale(1); }
+    to { transform: scale(1.1); }
+  }
+
+  .animate-slow-zoom {
+    animation: slow-zoom 20s ease-in-out infinite alternate;
+  }
+}
+
+@layer utilities {
+  .section-padding {
+    @apply py-20 lg:py-32;
+  }
+  
+  .container-custom {
+    @apply max-w-(--max-width-content) mx-auto px-6 lg:px-8;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+}
