@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Camera, Download, Play, RefreshCw, X, Image as ImageIcon } from 'lucide-react';
 import { Button } from '../ui/Button';

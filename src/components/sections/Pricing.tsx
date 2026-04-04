@@ -1,4 +1,3 @@
-import React from 'react';
 import { Check } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { cn } from '../../lib/utils';
@@ -59,7 +58,7 @@ export const Pricing = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 items-center">
-          {packages.map((pkg, index) => (
+          {packages.map((pkg) => (
             <div 
               key={pkg.name}
               className={cn(
