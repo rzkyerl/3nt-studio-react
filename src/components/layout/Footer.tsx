@@ -49,18 +49,18 @@ export const Footer = () => {
           <h4 className="text-sm uppercase tracking-widest font-bold mb-8">Get In Touch</h4>
           <ul className="space-y-6">
             <li className="flex items-start gap-4">
-              <MapPin size={18} className="mt-1 text-medium-gray" />
+              <MapPin size={22} className="mt-1 text-medium-gray shrink-0" />
               <span className="text-medium-gray leading-relaxed">
                 Gg. Arim 2, RT.003/RW.009, <br /> Paninggilan Utara
                 Kec. Ciledug, <br /> Kota Tangerang, Banten 15153
               </span>
             </li>
             <li className="flex items-center gap-4">
-              <Phone size={18} className="text-medium-gray" />
+              <Phone size={22} className="text-medium-gray shrink-0" />
               <span className="text-medium-gray">+62 812 12345678</span>
             </li>
             <li className="flex items-center gap-4">
-              <Mail size={18} className="text-medium-gray" />
+              <Mail size={22} className="text-medium-gray shrink-0" />
               <span className="text-medium-gray">hello@3ntstudio.com</span>
             </li>
           </ul>
