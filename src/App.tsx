@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import Portfolio from './pages/Portfolio';
 import Pricing from './pages/Pricing';
 import Location from './pages/Location';
+import Booking from './pages/Booking';
 import Photobooth from './pages/Photobooth';
 import './App.css';
 
@@ -19,6 +20,7 @@ function App() {
             <Route path="/portfolio" element={<Portfolio />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/location" element={<Location />} />
+            <Route path="/booking" element={<Booking />} />
             <Route path="/photobooth" element={<Photobooth />} />
           </Routes>
         </div>

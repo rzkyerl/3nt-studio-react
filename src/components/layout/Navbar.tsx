@@ -11,6 +11,7 @@ const navLinks = [
   { name: 'Portofolio', href: '/portfolio' },
   { name: 'Pricing', href: '/pricing' },
   { name: 'Location', href: '/location' },
+  { name: 'Booking', href: '/booking' },
   { name: 'Photobooth', href: '/photobooth' },
 ];
 
@@ -35,15 +36,15 @@ export const Navbar = () => {
   return (
     <nav
       className={cn(
-        'fixed top-0 left-0 w-full z-50 transition-all duration-500 py-6',
+        'fixed top-0 left-0 w-full z-50 transition-all duration-500',
         (navStyle === 'scrolled' || isMobileMenuOpen)
-          ? 'bg-pure-white backdrop-blur-md border-b border-border-gray/50 py-4' 
-          : 'bg-transparent'
+          ? 'bg-white py-4 border-b border-border-gray/50' 
+          : 'bg-transparent py-6'
       )}
     >
-      <div className="container-custom flex justify-between items-center">
+      <div className="container-custom flex justify-between items-center relative z-50">
         {/* Logo */}
-        <Link to="/" className="z-50">
+        <Link to="/" onClick={() => setIsMobileMenuOpen(false)}>
           <img 
             src={(navStyle === 'scrolled' || isMobileMenuOpen) ? logoBlack : logoWhite} 
             alt="3NT STUDIO" 
@@ -66,7 +67,7 @@ export const Navbar = () => {
               {link.name}
             </NavLink>
           ))}
-          <Link to="/location">
+          <Link to="/booking">
             <button className={cn(
               'px-6 py-2 border transition-all duration-300 uppercase tracking-widest text-xs font-semibold cursor-pointer',
               navStyle === 'scrolled' 
@@ -81,12 +82,13 @@ export const Navbar = () => {
         {/* Mobile Toggle */}
         <button
           className={cn(
-            "md:hidden transition-colors duration-300 z-50",
+            "md:hidden transition-colors duration-300",
             (navStyle === 'scrolled' || isMobileMenuOpen) ? 'text-primary-black' : 'text-pure-white'
           )}
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          aria-label="Toggle Menu"
         >
-          {isMobileMenuOpen ? <X /> : <Menu />}
+          {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
         </button>
       </div>
 
@@ -94,24 +96,45 @@ export const Navbar = () => {
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="fixed inset-0 top-[72px] bg-pure-white z-40 md:hidden flex flex-col items-center justify-center gap-8"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-white z-[45] md:hidden flex flex-col items-center justify-center pt-20"
           >
-            {navLinks.map((link) => (
-              <NavLink
-                key={link.name}
-                to={link.href}
-                onClick={() => setIsMobileMenuOpen(false)}
-                className={({ isActive }) => cn(
-                  "text-2xl uppercase tracking-widest font-heading text-primary-black hover:text-medium-gray",
-                  isActive && "italic"
-                )}
+            <div className="flex flex-col items-center gap-8 py-10">
+              {navLinks.map((link, index) => (
+                <motion.div
+                  key={link.name}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                >
+                  <NavLink
+                    to={link.href}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={({ isActive }) => cn(
+                      "text-3xl uppercase tracking-[0.2em] font-heading text-primary-black hover:text-medium-gray transition-colors",
+                      isActive && "italic font-bold"
+                    )}
+                  >
+                    {link.name}
+                  </NavLink>
+                </motion.div>
+              ))}
+              
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: navLinks.length * 0.05 }}
+                className="mt-6"
               >
-                {link.name}
-              </NavLink>
-            ))}
+                <Link to="/booking" onClick={() => setIsMobileMenuOpen(false)}>
+                  <button className="px-12 py-4 bg-primary-black text-pure-white uppercase tracking-[0.2em] text-xs font-bold shadow-lg">
+                    Book Now
+                  </button>
+                </Link>
+              </motion.div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

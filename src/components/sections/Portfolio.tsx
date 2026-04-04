@@ -2,6 +2,12 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '../../lib/utils';
 import graduationImg from '../../assets/Photo/graduation-1.jpg';
+import graduationPhotosImg from '../../assets/Photo/graduation-2.jpg';
+import weddingImg1 from '../../assets/Photo/wedding-1.jpg';
+import familyVideo from '../../assets/Video/family-cinematic.mp4';
+import weddingImg2 from '../../assets/Photo/wedding-2.jpg';
+
+
 
 const categories = ['All', 'Wedding', 'Prewedding', 'Family', 'Graduation', 'Product'];
 
@@ -47,7 +53,35 @@ const portfolioItems = [
     category: "Product",
     image: "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?auto=format&fit=crop&q=80&w=800",
     className: "md:col-span-1 md:row-span-1"
-  }
+  },
+  {
+    id: 7,
+    title: "Graduation Photos",
+    category: "Graduation",
+    image: graduationPhotosImg,
+    className: "md:col-span-1 md:row-span-1"
+  },
+  {
+    id: 8,
+    title: "Pre-Wedding Photos",
+    category: "Prewedding",
+    image: weddingImg1,
+    className: "md:col-span-1 md:row-span-1"
+  },
+  {
+    id: 9,
+    title: "Family Video",
+    category: "Family",
+    video: familyVideo,
+    className: "md:col-span-2 md:row-span-2"
+  },
+   {
+    id: 10,
+    title: "Wedding Photos",
+    category: "Wedding",
+    image: weddingImg2,
+    className: "md:col-span-1 md:row-span-2"
+  },
 ];
 
 export const Portfolio = () => {
@@ -60,8 +94,8 @@ export const Portfolio = () => {
   return (
     <section id="portfolio" className="section-padding bg-light-gray">
       <div className="container-custom">
-        <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
-          <div className="space-y-4">
+        <div className="flex flex-col md:flex-row justify-between items-center md:items-end mb-16 gap-y-10">
+          <div className="space-y-4 text-center md:text-left md:max-w-[50%]">
             <span className="text-xs uppercase tracking-[0.4em] text-medium-gray font-bold">Our Work</span>
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-heading leading-tight italic font-light">
               Timeless <span className="not-italic font-bold">Moments</span>
@@ -69,13 +103,13 @@ export const Portfolio = () => {
           </div>
           
           {/* Categories Filter */}
-          <div className="flex flex-wrap gap-8">
+          <div className="flex flex-wrap justify-center md:justify-end gap-x-6 md:gap-x-8 gap-y-4">
             {categories.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
                 className={cn(
-                  'text-xs uppercase tracking-[0.2em] font-bold transition-all duration-300 relative py-2',
+                  'text-[10px] md:text-xs uppercase tracking-[0.2em] font-bold transition-all duration-300 relative py-2 whitespace-nowrap',
                   activeCategory === cat ? 'text-primary-black' : 'text-medium-gray hover:text-primary-black'
                 )}
               >
@@ -110,11 +144,22 @@ export const Portfolio = () => {
                   item.className
                 )}
               >
-                <img 
-                  src={item.image} 
-                  alt={item.title} 
-                  className="w-full h-full object-cover grayscale transition-all duration-700 group-hover:scale-110 group-hover:grayscale-0"
-                />
+                {item.video ? (
+                  <video 
+                    src={item.video} 
+                    className="w-full h-full object-cover grayscale transition-all duration-700 group-hover:scale-110 group-hover:grayscale-0"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                  />
+                ) : (
+                  <img 
+                    src={item.image} 
+                    alt={item.title} 
+                    className="w-full h-full object-cover grayscale transition-all duration-700 group-hover:scale-110 group-hover:grayscale-0"
+                  />
+                )}
                 
                 {/* Overlay on Hover */}
                 <div className="absolute inset-0 bg-primary-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">

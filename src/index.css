@@ -35,6 +35,10 @@
   .animate-slow-zoom {
     animation: slow-zoom 20s ease-in-out infinite alternate;
   }
+
+  .mirror {
+    transform: scaleX(-1);
+  }
 }
 
 @layer utilities {

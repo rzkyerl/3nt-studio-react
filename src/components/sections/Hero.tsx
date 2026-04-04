@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 import { Button } from '../ui/Button';
-import heroVideo from '../../assets/Video/Cinematic.mp4';
+import heroVideo from '../../assets/Video/cinematic-bg.mp4';
 
 import { Link } from 'react-router-dom';
 
@@ -50,7 +50,7 @@ export const Hero = () => {
           transition={{ duration: 0.8, delay: 0.6 }}
           className="flex flex-col sm:flex-row gap-6 justify-center"
         >
-          <Link to="/location">
+          <Link to="/booking">
             <Button variant="primary" size="lg" className="bg-pure-white text-primary-black hover:bg-transparent hover:text-pure-white hover:border-pure-white border-pure-white">
               Book Now
             </Button>
