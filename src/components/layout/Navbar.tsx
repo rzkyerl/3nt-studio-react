@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import { NavLink, Link, useLocation } from 'react-router-dom';
 import { cn } from '../../lib/utils';
+import logoBlack from '../../assets/Photo/logo-black.png';
+import logoWhite from '../../assets/Photo/logo-white.png';
 
 const navLinks = [
   { name: 'Home', href: '/' },
@@ -41,11 +43,12 @@ export const Navbar = () => {
     >
       <div className="container-custom flex justify-between items-center">
         {/* Logo */}
-        <Link to="/" className={cn(
-          "text-2xl font-heading font-bold tracking-tighter transition-colors duration-300 z-50",
-          (navStyle === 'scrolled' || isMobileMenuOpen) ? 'text-primary-black' : 'text-pure-white'
-        )}>
-          3NT <span className="font-light italic">STUDIO</span>
+        <Link to="/" className="z-50">
+          <img 
+            src={(navStyle === 'scrolled' || isMobileMenuOpen) ? logoBlack : logoWhite} 
+            alt="3NT STUDIO" 
+            className="h-10 w-auto transition-all duration-300"
+          />
         </Link>
 
         {/* Desktop Menu */}

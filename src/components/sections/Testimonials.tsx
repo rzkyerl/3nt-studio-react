@@ -5,13 +5,13 @@ const testimonials = [
   {
     name: "Sarah Jenkins",
     role: "Bride",
-    quote: "Tono&Noto Studio captured our wedding so beautifully. Their minimalist approach made every photo look like a piece of high-end art. We couldn't be happier.",
+    quote: "3NT Studio captured our wedding so beautifully. Their minimalist approach made every photo look like a piece of high-end art. We couldn't be happier.",
     image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=150&h=150"
   },
   {
     name: "David Miller",
     role: "Creative Director",
-    quote: "As a brand manager, I'm very picky about aesthetics. Tono&Noto' clean, monochrome style was perfect for our product launch. Highly recommended.",
+    quote: "As a brand manager, I'm very picky about aesthetics. 3NT Studio's clean, monochrome style was perfect for our product launch. Highly recommended.",
     image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=150&h=150"
   },
   {

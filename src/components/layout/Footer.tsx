@@ -1,5 +1,6 @@
 import { Instagram, Facebook, Twitter, Mail, MapPin, Phone } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import logoWhite from '../../assets/Photo/logo-white.png';
 
 export const Footer = () => {
   return (
@@ -7,8 +8,12 @@ export const Footer = () => {
       <div className="container-custom grid grid-cols-1 md:grid-cols-4 gap-12 lg:gap-20">
         {/* Logo and About */}
         <div className="md:col-span-2">
-          <Link to="/" className="text-3xl font-heading font-bold tracking-tighter mb-8 inline-block">
-            3NT <span className="font-light italic">STUDIO</span>
+          <Link to="/" className="mb-8 inline-block">
+            <img 
+              src={logoWhite} 
+              alt="3NT STUDIO" 
+              className="h-10 w-auto"
+            />
           </Link>
           <p className="text-medium-gray max-w-sm leading-relaxed mb-8">
             Capturing the essence of every moment through a minimalist lens. Based in the heart of the city, we provide premium photography services for weddings, portraits, and commercial projects.
@@ -45,8 +50,8 @@ export const Footer = () => {
             <li className="flex items-start gap-4">
               <MapPin size={18} className="mt-1 text-medium-gray" />
               <span className="text-medium-gray leading-relaxed">
-                Gg. Arim 2, RT.003/RW.009, Paninggilan Utara<br />
-                Kec. Ciledug, Kota Tangerang, Banten 15153
+                Gg. Arim 2, RT.003/RW.009, <br /> Paninggilan Utara
+                Kec. Ciledug, <br /> Kota Tangerang, Banten 15153
               </span>
             </li>
             <li className="flex items-center gap-4">
