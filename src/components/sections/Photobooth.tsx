@@ -1,6 +1,8 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Download, RefreshCw, Sparkles, Palette, Calendar, Share2 } from 'lucide-react';
+import logoBlack from '../../assets/Photo/logo-black.png';
+import logoWhite from '../../assets/Photo/logo-white.png';
 
 type State = 'START' | 'SETUP' | 'CAMERA' | 'RESULT';
 type LayoutType = '1x3' | '1x4' | '2x2';
@@ -216,12 +218,15 @@ export const Photobooth = () => {
     ctx.fillStyle = frameColor;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Header
+    // Header Logo Image
     const isDark = ['#0A0A0A', '#666666'].includes(frameColor);
-    ctx.fillStyle = isDark ? '#FFFFFF' : '#000000';
-    ctx.font = 'bold 28px Playfair Display';
-    ctx.textAlign = 'center';
-    ctx.fillText('3NT STUDIO', canvas.width / 2, padding + 30);
+    const logoImg = new Image();
+    logoImg.src = isDark ? logoWhite : logoBlack;
+    
+    // Draw logo centered in header
+    const logoWidth = 120;
+    const logoHeight = 40;
+    ctx.drawImage(logoImg, (canvas.width - logoWidth) / 2, padding, logoWidth, logoHeight);
 
     // Draw Photos
     photos.forEach((photo, index) => {
@@ -461,12 +466,13 @@ export const Photobooth = () => {
                   style={{ backgroundColor: frameColor }}
                 >
                   <div className="flex flex-col gap-4">
-                    {/* Header */}
-                    <div className={cn(
-                      "text-center font-heading font-bold text-lg tracking-tighter mb-2",
-                      ['#0A0A0A', '#666666'].includes(frameColor) ? 'text-white' : 'text-black'
-                    )}>
-                      3NT STUDIO
+                    {/* Header Logo */}
+                    <div className="flex justify-center mb-2">
+                      <img 
+                        src={(['#0A0A0A', '#666666'].includes(frameColor)) ? logoWhite : logoBlack} 
+                        alt="3NT STUDIO" 
+                        className="h-8 w-auto"
+                      />
                     </div>
 
                     {/* Photos Layout */}
