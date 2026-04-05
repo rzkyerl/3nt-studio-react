@@ -51,7 +51,7 @@ export const LocationSection = () => {
                 <Phone size={18} /> Phone
               </h4>
               <p className="text-medium-gray text-lg leading-relaxed italic">
-                +62 812 12345678
+                +62 856-9722-9466
               </p>
             </div>
             <div className="space-y-4">
