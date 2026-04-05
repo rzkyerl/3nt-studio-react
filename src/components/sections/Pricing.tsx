@@ -82,7 +82,7 @@ export const Pricing = () => {
               </ul>
 
               <div className="text-center">
-                <Link to="/location">
+                <Link to="/booking">
                   <Button 
                     variant={pkg.highlight ? 'primary' : 'outline'} 
                     className="w-full"
@@ -93,6 +93,26 @@ export const Pricing = () => {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Custom Request Note */}
+        <div className="mt-24 text-center space-y-8 max-w-2xl mx-auto border-t border-border-gray pt-16">
+          <div className="space-y-2">
+            <h4 className="text-sm uppercase tracking-widest font-bold">Custom Package</h4>
+            <p className="text-medium-gray italic leading-relaxed">
+              "Have a unique concept in mind or want to tailor a package to your budget? We're more than happy to discuss a custom plan that fits your specific needs."
+            </p>
+          </div>
+          
+          <Link to="/booking" className="inline-block">
+            <Button variant="outline" className="px-10 py-4 hover:bg-primary-black hover:text-pure-white transition-all">
+              Contact Admin / Custom Request
+            </Button>
+          </Link>
+          
+          <p className="text-[10px] text-medium-gray uppercase tracking-widest">
+            *Admin response within 24 hours during business days.
+          </p>
         </div>
       </div>
     </section>

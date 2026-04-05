@@ -101,8 +101,28 @@ export const BookingSection = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    alert('Thank you for your reservation! We will contact you shortly.');
+    
+    // Construct WhatsApp message template
+    const adminPhoneNumber = "6281212345678"; // Using the number from LocationSection
+    const message = `*NEW BOOKING RESERVATION - 3NT STUDIO*
+----------------------------------------
+*Name:* ${formData.name}
+*Phone:* ${formData.phone}
+*Date:* ${formData.date}
+*Package:* ${formData.package || 'Custom Request'}
+----------------------------------------
+*Notes:* 
+${formData.notes || '-'}
+----------------------------------------
+Sent from 3ntstudio.com`;
+
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappUrl = `https://wa.me/${adminPhoneNumber}?text=${encodedMessage}`;
+
+    // Open WhatsApp in a new tab
+    window.open(whatsappUrl, '_blank');
+
+    alert('Redirecting to WhatsApp to complete your reservation...');
     setFormData({ name: '', phone: '', date: '', package: '', notes: '' });
   };
 

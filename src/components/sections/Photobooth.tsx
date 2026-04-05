@@ -4,6 +4,37 @@ import { Download, RefreshCw, Sparkles, Palette, Calendar, Share2 } from 'lucide
 import logoBlack from '../../assets/Photo/logo-black.png';
 import logoWhite from '../../assets/Photo/logo-white.png';
 
+// Import Frames
+import frame1 from '../../assets/Photo/Photobox Strip/1.png';
+import frame2 from '../../assets/Photo/Photobox Strip/2.png';
+import frame3 from '../../assets/Photo/Photobox Strip/3.png';
+import frame4 from '../../assets/Photo/Photobox Strip/4.png';
+import frame5 from '../../assets/Photo/Photobox Strip/5.png';
+import frame6 from '../../assets/Photo/Photobox Strip/6.png';
+import frame7 from '../../assets/Photo/Photobox Strip/7.png';
+import frame8 from '../../assets/Photo/Photobox Strip/8.png';
+import frame9 from '../../assets/Photo/Photobox Strip/9.png';
+import frame10 from '../../assets/Photo/Photobox Strip/10.png';
+import frame11 from '../../assets/Photo/Photobox Strip/11.png';
+import frame12 from '../../assets/Photo/Photobox Strip/12.png';
+import frame13 from '../../assets/Photo/Photobox Strip/13.png';
+
+const STRIP_FRAMES = [
+  { id: 'frame1', src: frame1 },
+  { id: 'frame2', src: frame2 },
+  { id: 'frame3', src: frame3 },
+  { id: 'frame4', src: frame4 },
+  { id: 'frame5', src: frame5 },
+  { id: 'frame6', src: frame6 },
+  { id: 'frame7', src: frame7 },
+  { id: 'frame8', src: frame8 },
+  { id: 'frame9', src: frame9 },
+  { id: 'frame10', src: frame10 },
+  { id: 'frame11', src: frame11 },
+  { id: 'frame12', src: frame12 },
+  { id: 'frame13', src: frame13 },
+];
+
 type State = 'START' | 'SETUP' | 'CAMERA' | 'RESULT';
 type LayoutType = '1x3' | '1x4' | '2x2';
 
@@ -48,6 +79,7 @@ export const Photobooth = () => {
   
   // Customization States
   const [frameColor, setFrameColor] = useState('#FFFFFF');
+  const [selectedFrame, setSelectedFrame] = useState<string | null>(null);
   const [showDate, setShowDate] = useState(true);
   const [appliedStickers, setAppliedStickers] = useState<{ id: string, emoji: string, x: number, y: number }[]>([]);
 
@@ -192,7 +224,7 @@ export const Photobooth = () => {
     };
   }, [state, startAutoCaptureFlow]);
 
-  const generateStrip = useCallback(() => {
+  const generateStrip = useCallback(async () => {
     if (photos.length === 0) return null;
     
     const canvas = document.createElement('canvas');
@@ -214,35 +246,60 @@ export const Photobooth = () => {
       canvas.height = (photoHeight * count) + (padding * (count + 1)) + headerHeight + footerHeight;
     }
 
+    // Helper to load image
+    const loadImage = (src: string): Promise<HTMLImageElement> => {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = reject;
+        img.src = src;
+      });
+    };
+
     // Background
     ctx.fillStyle = frameColor;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+    // Draw Custom Frame if selected (behind photos)
+    if (selectedFrame) {
+      try {
+        const frameImg = await loadImage(selectedFrame);
+        ctx.drawImage(frameImg, 0, 0, canvas.width, canvas.height);
+      } catch (err) {
+        console.error("Error loading frame image:", err);
+      }
+    }
+
     // Header Logo Image
     const isDark = ['#0A0A0A', '#666666'].includes(frameColor);
-    const logoImg = new Image();
-    logoImg.src = isDark ? logoWhite : logoBlack;
-    
-    // Draw logo centered in header
-    const logoWidth = 120;
-    const logoHeight = 40;
-    ctx.drawImage(logoImg, (canvas.width - logoWidth) / 2, padding, logoWidth, logoHeight);
+    try {
+      const logoImg = await loadImage(isDark ? logoWhite : logoBlack);
+      const logoWidth = 120;
+      const logoHeight = 40;
+      ctx.drawImage(logoImg, (canvas.width - logoWidth) / 2, padding, logoWidth, logoHeight);
+    } catch (err) {
+      console.error("Error loading logo:", err);
+    }
 
     // Draw Photos
-    photos.forEach((photo, index) => {
-      const img = new Image();
-      img.src = photo.url;
-      
-      let x = padding;
-      let y = padding + headerHeight + (index * (photoHeight + padding));
+    for (let index = 0; index < photos.length; index++) {
+      const photo = photos[index];
+      try {
+        const img = await loadImage(photo.url);
+        
+        let x = padding;
+        let y = padding + headerHeight + (index * (photoHeight + padding));
 
-      if (layout === '2x2') {
-        x = padding + (index % 2) * (photoWidth + padding);
-        y = padding + headerHeight + Math.floor(index / 2) * (photoHeight + padding);
+        if (layout === '2x2') {
+          x = padding + (index % 2) * (photoWidth + padding);
+          y = padding + headerHeight + Math.floor(index / 2) * (photoHeight + padding);
+        }
+
+        ctx.drawImage(img, x, y, photoWidth, photoHeight);
+      } catch (err) {
+        console.error("Error loading captured photo:", err);
       }
-
-      ctx.drawImage(img, x, y, photoWidth, photoHeight);
-    });
+    }
 
     // Stickers
     appliedStickers.forEach(s => {
@@ -252,16 +309,18 @@ export const Photobooth = () => {
 
     // Footer
     if (showDate) {
+      const isDark = ['#0A0A0A', '#666666'].includes(frameColor);
       ctx.fillStyle = isDark ? '#CCCCCC' : '#666666';
       ctx.font = '16px Inter';
+      ctx.textAlign = 'center';
       ctx.fillText(new Date().toLocaleDateString(), canvas.width / 2, canvas.height - 40);
     }
 
     return canvas.toDataURL('image/png');
-  }, [photos, frameColor, showDate, layout, appliedStickers]);
+  }, [photos, frameColor, selectedFrame, showDate, layout, appliedStickers]);
 
-  const downloadStrip = () => {
-    const dataUrl = generateStrip();
+  const downloadStrip = async () => {
+    const dataUrl = await generateStrip();
     if (dataUrl) {
       const link = document.createElement('a');
       link.href = dataUrl;
@@ -462,10 +521,19 @@ export const Photobooth = () => {
               {/* Photo Strip Preview */}
               <div className="flex justify-center order-2 lg:order-1 sticky top-32">
                 <div 
-                  className="p-6 shadow-[0_40px_80px_-15px_rgba(0,0,0,0.6)] transition-colors duration-500 overflow-hidden"
+                  className="relative p-6 shadow-[0_40px_80px_-15px_rgba(0,0,0,0.6)] transition-colors duration-500 overflow-hidden"
                   style={{ backgroundColor: frameColor }}
                 >
-                  <div className="flex flex-col gap-4">
+                  {/* Custom Frame Background */}
+                  {selectedFrame && (
+                    <img 
+                      src={selectedFrame} 
+                      alt="" 
+                      className="absolute inset-0 w-full h-full object-fill z-0 pointer-events-none"
+                    />
+                  )}
+
+                  <div className="flex flex-col gap-4 relative z-10">
                     {/* Header Logo */}
                     <div className="flex justify-center mb-2">
                       <img 
@@ -508,6 +576,36 @@ export const Photobooth = () => {
                 </div>
 
                 <div className="space-y-10">
+                  {/* Custom Frames */}
+                  <div className="space-y-4">
+                    <label className="flex items-center gap-3 text-xs uppercase tracking-widest font-bold">
+                      <Sparkles size={16} /> Frame Design
+                    </label>
+                    <div className="grid grid-cols-4 gap-2">
+                      <button 
+                        onClick={() => setSelectedFrame(null)}
+                        className={cn(
+                          "aspect-[3/4] border-2 flex items-center justify-center text-[8px] uppercase font-bold text-center p-1 transition-all",
+                          selectedFrame === null ? "border-white bg-white/20" : "border-white/10 hover:border-white/30"
+                        )}
+                      >
+                        No Frame
+                      </button>
+                      {STRIP_FRAMES.map((frame, idx) => (
+                        <button 
+                          key={frame.id}
+                          onClick={() => setSelectedFrame(frame.src)}
+                          className={cn(
+                            "aspect-[3/4] border-2 overflow-hidden transition-all",
+                            selectedFrame === frame.src ? "border-white scale-105" : "border-white/10 hover:border-white/30"
+                          )}
+                        >
+                          <img src={frame.src} alt={`Frame ${idx + 1}`} className="w-full h-full object-cover" />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
                   {/* Frame Color */}
                   <div className="space-y-4">
                     <label className="flex items-center gap-3 text-xs uppercase tracking-widest font-bold">
