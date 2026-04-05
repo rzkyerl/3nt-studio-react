@@ -156,7 +156,7 @@ export const Portfolio = () => {
                     {item.video ? (
                       <video 
                         src={item.video} 
-                        className="w-full h-full object-cover grayscale transition-all duration-700 group-hover:scale-110 group-hover:grayscale-0"
+                        className="w-full h-full object-cover lg:grayscale transition-all duration-700 group-hover:scale-110 group-hover:grayscale-0"
                         autoPlay
                         loop
                         muted
@@ -166,7 +166,7 @@ export const Portfolio = () => {
                       <img 
                         src={item.image} 
                         alt={group.title} 
-                        className="w-full h-full object-cover grayscale transition-all duration-700 group-hover:scale-110 group-hover:grayscale-0"
+                        className="w-full h-full object-cover lg:grayscale transition-all duration-700 group-hover:scale-110 group-hover:grayscale-0"
                       />
                     )}
                     

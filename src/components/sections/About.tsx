@@ -36,7 +36,7 @@ export const About = () => {
             <img 
               src="https://images.unsplash.com/photo-1554048612-b6a482bc67e5?auto=format&fit=crop&q=80&w=1200" 
               alt="Studio Interior" 
-              className="w-full h-full object-cover grayscale transition-all duration-700 group-hover:scale-105 group-hover:grayscale-0"
+              className="w-full h-full object-cover lg:grayscale transition-all duration-700 group-hover:scale-105 group-hover:grayscale-0"
             />
             <div className="absolute inset-0 bg-black/10 transition-opacity duration-500 group-hover:opacity-0" />
           </motion.div>
@@ -96,7 +96,7 @@ export const About = () => {
                 transition={{ duration: 0.5, delay: index * 0.2 }}
                 className="flex flex-col items-center text-center space-y-6"
               >
-                <div className="w-48 h-48 rounded-full overflow-hidden grayscale hover:grayscale-0 transition-all duration-500 shadow-xl border-4 border-white">
+                <div className="w-48 h-48 rounded-full overflow-hidden lg:grayscale hover:grayscale-0 transition-all duration-500 shadow-xl border-4 border-white">
                   <img 
                     src={member.image} 
                     alt={member.name} 

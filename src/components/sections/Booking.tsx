@@ -70,7 +70,7 @@ export const LocationSection = () => {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="relative w-full aspect-video bg-light-gray overflow-hidden grayscale border border-border-gray shadow-xl group"
+            className="relative w-full aspect-video bg-light-gray overflow-hidden lg:grayscale border border-border-gray shadow-xl group"
           >
             <iframe
               title="Studio Location"
@@ -81,7 +81,7 @@ export const LocationSection = () => {
               allowFullScreen={true}
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
-              className="opacity-80 transition-opacity duration-500 group-hover:opacity-100"
+              className="lg:opacity-80 transition-opacity duration-500 group-hover:opacity-100"
             ></iframe>
           </motion.div>
         </div>

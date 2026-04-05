@@ -72,7 +72,7 @@ export const Clients = () => {
               <img 
                 src={client.logo} 
                 alt={client.name} 
-                className="h-20 md:h-24 w-auto max-w-[140px] md:max-w-[180px] object-contain grayscale opacity-40 transition-all duration-500 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-110"
+                className="h-16 md:h-20 w-auto max-w-[140px] md:max-w-[180px] object-contain lg:grayscale opacity-100 transition-all duration-500 group-hover:grayscale-0 group-hover:scale-110"
               />
             </motion.div>
           ))}

@@ -61,7 +61,7 @@ export const Services = () => {
                 <img 
                   src={service.image} 
                   alt={service.title} 
-                  className="w-full h-full object-cover grayscale transition-all duration-700 group-hover:grayscale-0 group-hover:scale-110"
+                  className="w-full h-full object-cover lg:grayscale transition-all duration-700 group-hover:grayscale-0 group-hover:scale-110"
                 />
               </div>
               
