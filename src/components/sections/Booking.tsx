@@ -59,7 +59,7 @@ export const LocationSection = () => {
                 <Mail size={18} /> Email
               </h4>
               <p className="text-medium-gray text-lg leading-relaxed italic">
-                hello@3ntstudio.com
+                3nteamprod@gmail.com
               </p>
             </div>
           </motion.div>

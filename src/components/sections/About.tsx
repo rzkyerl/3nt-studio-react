@@ -50,19 +50,19 @@ export const About = () => {
             className="space-y-10"
           >
             <div className="space-y-4">
-              <span className="text-xs uppercase tracking-[0.4em] text-medium-gray font-bold">Our Story</span>
+              <span className="text-xs uppercase tracking-[0.4em] text-medium-gray font-bold">About Us</span>
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-heading leading-tight">
-                Crafting Visual <br />
-                <span className="italic font-light">Narratives Since 2022</span>
+                A Production House <br />
+                <span className="italic font-light">Based in Jakarta, Indonesia</span>
               </h2>
             </div>
             
             <p className="text-medium-gray text-lg leading-relaxed max-w-xl">
-              We believe that every photograph is a piece of art that tells a unique story. Our studio combines minimalist aesthetics with state-of-the-art technology to capture the most authentic and timeless moments of your life.
+              <strong>3NT Production</strong> is a Production House based in Jakarta, Indonesia that has been established since 2020. We are responsible for fundraising the production or may accomplish your needs through a parent company, partner, or private investor.
             </p>
             
             <p className="text-medium-gray text-lg leading-relaxed max-w-xl">
-              Whether it's a grand wedding or an intimate portrait session, we approach every project with the same passion and attention to detail that has defined our work for over a decade.
+              We believe we can give the best experience and result for our clients, that is why we are here to help you. We are specialize in any production services such as multimedias. And we are fulfilled with a youthful spirits and creativity.
             </p>
 
             <div className="pt-4">
