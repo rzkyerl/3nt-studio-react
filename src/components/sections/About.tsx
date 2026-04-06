@@ -2,21 +2,25 @@ import { motion } from 'framer-motion';
 
 import { Link } from 'react-router-dom';
 
+import StaffProductOwner from '../../assets/Photo/Staff Production/Bayu Tri Novianto.jpeg';
+import StaffArtDirection from '../../assets/Photo/Staff Production/Amr Fauzan Art Director.png';
+import StaffAssistant from '../../assets/Photo/Staff Production/Giyan Eko Putranto.jpeg';
+
 const team = [
   {
-    name: "Alex Rivera",
-    role: "Lead Photographer",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200&h=200"
+    name: "Bayu Tri Novianto",
+    role: "Owner 3NT Studio",
+    image: StaffProductOwner
   },
   {
-    name: "Elena Vance",
-    role: "Portrait Specialist",
-    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200&h=200"
+    name: "Amr Fauzan",
+    role: "Art Direction",
+    image: StaffArtDirection
   },
   {
-    name: "Marcus Thorne",
+    name: "Giyan Eko Putranto",
     role: "Studio Assistant",
-    image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200&h=200"
+    image: StaffAssistant
   }
 ];
 
