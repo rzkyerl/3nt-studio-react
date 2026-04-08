@@ -2,7 +2,6 @@ import { motion } from 'framer-motion';
 import sonyKit from '../../assets/Photo/Pricing/sony-kit-camera.jpg';
 import frame1 from '../../assets/Photo/Photobox Strip/1.png';
 import frame2 from '../../assets/Photo/Photobox Strip/2.png';
-import frame3 from '../../assets/Photo/Photobox Strip/3.png';
 import multicamImg from '../../assets/Photo/Production/multicam-production.png';
 
 // Import Portfolio Images for visuals
