@@ -19,7 +19,7 @@ const team = [
   },
   {
     name: "Giyan Eko Putranto",
-    role: "Studio Assistant",
+    role: "Lead Photographer",
     image: StaffAssistant
   }
 ];
