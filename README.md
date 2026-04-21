@@ -1,25 +1,29 @@
-# 3NT Studio - Premium Photography Portfolio
+# 3NT Studio - Premium Photography Portfolio & Booking System
 
-A modern, minimalist, and premium photography studio website built with React, Tailwind CSS, and Framer Motion. This project features a sophisticated monochrome aesthetic inspired by Squarespace, designed to showcase high-end photography.
+A modern, minimalist, and premium photography studio website built with React, Tailwind CSS, and Framer Motion. This project features a sophisticated monochrome aesthetic designed to showcase high-end photography and provide a seamless booking experience.
 
 ## ✨ Features
 
 - **Cinematic Hero Section**: Full-screen video background with smooth typography animations.
-- **Dynamic Portfolio**: Filterable masonry grid with grayscale-to-color hover effects.
+- **Dynamic Portfolio**: Filterable masonry grid with grayscale-to-color hover effects, integrated with Sanity CMS.
+- **Automated Booking System**: 
+  - Generates professional PDF confirmation using `jsPDF`.
+  - Automatically uploads booking details and PDFs to **Sanity CMS**.
+  - Direct integration with WhatsApp for instant notification and confirmation.
 - **Interactive Photobooth**: A unique feature allowing users to capture and download monochrome portraits directly from their browser.
-- **Modern Navigation**: Sticky, adaptive navbar with smooth transitions between pages.
+- **Embedded Admin Dashboard**: Fully integrated Sanity Studio at `/admin` for managing portfolio, pricing, team, and booking reservations.
 - **Responsive Design**: Fully optimized for mobile, tablet, and desktop viewing.
 - **Smooth Animations**: Subtle scroll-triggered animations using Framer Motion.
-- **Multi-Page Architecture**: Organized routing using React Router for Home, Portfolio, Pricing, Location, and Photobooth.
 
 ## 🛠️ Tech Stack
 
-- **Framework**: React 19
+- **Frontend**: React 19, Vite
 - **Styling**: Tailwind CSS 4
 - **Animations**: Framer Motion
+- **CMS & Backend**: Sanity.io
+- **PDF Generation**: jsPDF
 - **Routing**: React Router Dom
 - **Icons**: Lucide React
-- **Build Tool**: Vite
 
 ## 🚀 Getting Started
 
@@ -28,6 +32,16 @@ A modern, minimalist, and premium photography studio website built with React, T
 - Node.js (Latest LTS recommended)
 - npm or yarn
 
+### Environment Variables
+
+Create a `.env` file in the root directory and add your Sanity credentials:
+
+```env
+VITE_SANITY_PROJECT_ID=your_project_id
+VITE_SANITY_DATASET=production
+VITE_SANITY_TOKEN=your_sanity_write_token
+```
+
 ### Installation
 
 1. Clone the repository:
@@ -35,34 +49,22 @@ A modern, minimalist, and premium photography studio website built with React, T
    git clone https://github.com/rzkyerl/3nt-studio-react.git
    ```
 
-2. Navigate to the project directory:
-   ```bash
-   cd 3nt-studio-react
-   ```
-
-3. Install dependencies:
+2. Install dependencies:
    ```bash
    npm install
    ```
 
-4. Start the development server:
+3. Start the development server:
    ```bash
    npm run dev
    ```
 
-5. Build for production:
-   ```bash
-   npm run build
-   ```
+## 📂 Project Structure
 
-## 📸 Assets
-
-- Videos: Custom cinematic assets located in `src/assets/Video`.
-- Photos: High-resolution photography assets located in `src/assets/Photo`.
-
-## 📄 License
-
-This project is open source and available under the [MIT License](LICENSE).
+- `src/components/sections`: UI sections (Hero, Portfolio, Booking, etc.)
+- `src/sanity`: Sanity schemas and client configuration.
+- `src/utils`: Utility functions for PDF generation and storage.
+- `src/assets`: Cinematic videos and high-resolution photos.
 
 ---
 Crafted with ❤️ for **3NT Studio**.
