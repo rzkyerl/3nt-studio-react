@@ -6,48 +6,6 @@ import './AdminLoginGuard.css'
 
 const FORCE_LOGIN_FLAG = 'admin_force_login'
 
-/**
- * Hapus semua data auth Sanity dari localStorage.
- * Nuclear approach: hapus semua key yang mengandung kata kunci auth.
- */
-function clearSanityAuth() {
-  const toRemove: string[] = []
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i)
-    if (!key) continue
-    const lower = key.toLowerCase()
-    if (
-      lower.includes('sanity') ||
-      lower.includes('auth') ||
-      lower.includes('token') ||
-      lower.includes('session') ||
-      lower.includes('login') ||
-      lower.startsWith('@@')
-    ) {
-      toRemove.push(key)
-    }
-  }
-  toRemove.forEach((k) => localStorage.removeItem(k))
-}
-
-/**
- * Cek apakah Sanity sudah menulis auth token ke localStorage
- * (digunakan untuk polling setelah user login via Sanity panel).
- */
-function hasSanityAuthToken(): boolean {
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i)
-    if (!key) continue
-    const lower = key.toLowerCase()
-    if (lower.includes('sanity') || lower.includes('auth') || lower.includes('token')) {
-      const val = localStorage.getItem(key)
-      // Token biasanya string panjang > 20 karakter
-      if (val && val.length > 20) return true
-    }
-  }
-  return false
-}
-
 type GuardState = 'checking' | 'expired' | 'authenticating' | 'authenticated'
 
 export default function AdminLoginGuard() {
