@@ -1,22 +1,27 @@
-import logoBlack from '../../assets/Photo/logo-black.png'
+import { useColorScheme } from 'sanity'
+import logoBlack from '/logo-black.png'
+import logoWhite from '/logo-white.png'
 
 export const StudioLogo = () => {
+  const { scheme } = useColorScheme()
+  const isDark = scheme === 'dark'
+  const logoSrc = isDark ? logoWhite : logoBlack
+
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '0 8px' }}>
       <img 
-        src={logoBlack} 
+        src={logoSrc} 
         alt="3NT STUDIO Logo" 
         style={{ 
           height: '24px', 
           width: 'auto',
-          display: 'block',
-          filter: 'brightness(0)' // Memastikan logo benar-benar hitam pekat
+          display: 'block'
         }} 
       />
       <div style={{
         height: '20px',
         width: '1px',
-        background: '#e5e5e5',
+        background: isDark ? '#333' : '#e5e5e5',
         margin: '0 4px'
       }} />
       <span style={{ 
@@ -24,7 +29,7 @@ export const StudioLogo = () => {
         letterSpacing: '0.2em', 
         fontSize: '11px',
         fontFamily: 'Inter, sans-serif',
-        color: '#666',
+        color: isDark ? '#999' : '#666',
         textTransform: 'uppercase'
       }}>
         Admin Dashboard
@@ -34,25 +39,31 @@ export const StudioLogo = () => {
 }
 
 export const StudioIcon = () => {
+  const { scheme } = useColorScheme()
+  const isDark = scheme === 'dark'
+  const logoSrc = isDark ? logoWhite : logoBlack
+
   return (
     <img 
-      src={logoBlack} 
+      src={logoSrc} 
       alt="3NT STUDIO Icon" 
       style={{ 
         height: '20px', 
         width: 'auto',
-        display: 'block',
-        filter: 'brightness(0)'
+        display: 'block'
       }} 
     />
   )
 }
 
 export const StudioNavbar = (props: any) => {
+  const { scheme } = useColorScheme()
+  const isDark = scheme === 'dark'
+
   return (
     <div style={{ 
-      borderBottom: '1px solid #f0f0f0',
-      background: '#fff'
+      borderBottom: `1px solid ${isDark ? '#222' : '#f0f0f0'}`,
+      background: isDark ? '#101112' : '#fff'
     }}>
       {props.renderDefault(props)}
     </div>
