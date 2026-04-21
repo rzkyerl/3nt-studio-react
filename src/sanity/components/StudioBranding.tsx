@@ -1,29 +1,27 @@
+import logoBlack from '../../assets/Photo/logo-black.png'
+
 export const StudioLogo = () => {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-      <div style={{
-        background: '#000',
-        color: '#fff',
-        width: '24px',
-        height: '24px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderRadius: '4px',
-        fontWeight: 'bold',
-        fontSize: '14px',
-        fontFamily: 'Inter, sans-serif'
-      }}>
-        3
-      </div>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+      <img 
+        src={logoBlack} 
+        alt="3NT STUDIO Logo" 
+        style={{ 
+          height: '28px', 
+          width: 'auto',
+          display: 'block'
+        }} 
+      />
       <span style={{ 
         fontWeight: 700, 
-        letterSpacing: '0.1em', 
+        letterSpacing: '0.15em', 
         fontSize: '14px',
         fontFamily: '"Playfair Display", serif',
-        color: '#000'
+        color: '#000',
+        borderLeft: '1px solid #ddd',
+        paddingLeft: '12px'
       }}>
-        3NT STUDIO
+        CONTROL CENTER
       </span>
     </div>
   )
