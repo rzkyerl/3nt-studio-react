@@ -1,11 +1,9 @@
 import { useColorScheme } from 'sanity'
-import logoBlack from '/logo-black.png'
-import logoWhite from '/logo-white.png'
 
 export const StudioLogo = () => {
   const { scheme } = useColorScheme()
   const isDark = scheme === 'dark'
-  const logoSrc = isDark ? logoWhite : logoBlack
+  const logoSrc = isDark ? '/logo-white.png' : '/logo-black.png'
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '0 8px' }}>
@@ -41,7 +39,7 @@ export const StudioLogo = () => {
 export const StudioIcon = () => {
   const { scheme } = useColorScheme()
   const isDark = scheme === 'dark'
-  const logoSrc = isDark ? logoWhite : logoBlack
+  const logoSrc = isDark ? '/logo-white.png' : '/logo-black.png'
 
   return (
     <img 
