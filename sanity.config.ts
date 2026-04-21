@@ -1,12 +1,13 @@
 import { defineConfig } from 'sanity'
 import { structureTool } from 'sanity/structure'
 import { schemaTypes } from './src/sanity/schemas'
-import { StudioLogo, StudioNavbar } from './src/sanity/components/StudioBranding'
+import { StudioLogo, StudioNavbar, StudioIcon } from './src/sanity/components/StudioBranding'
 import { Home, FileText, Layout, Users, Briefcase, Award, Calendar, Image } from 'lucide-react'
 
 export default defineConfig({
   name: 'default',
   title: '3NT STUDIO',
+  icon: StudioIcon,
 
   projectId: import.meta.env.VITE_SANITY_PROJECT_ID || 'your_project_id',
   dataset: import.meta.env.VITE_SANITY_DATASET || 'production',
