@@ -1,0 +1,163 @@
+/* ═══════════════════════════════════════════════════════════════
+   AdminLoginGuard.css  —  Squarespace-inspired session screen
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Loading screen ──────────────────────────────────────────── */
+.aig-loading {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  z-index: 9999;
+}
+
+.aig-spinner {
+  width: 28px;
+  height: 28px;
+  border: 2px solid #e5e5e5;
+  border-top-color: #1a1a1a;
+  border-radius: 50%;
+  animation: aig-spin 0.75s linear infinite;
+}
+
+@keyframes aig-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Full-screen session expired layout ──────────────────────── */
+.aig-screen {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f9f9f7;
+  z-index: 9999;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* ── Center card ─────────────────────────────────────────────── */
+.aig-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  width: 100%;
+  max-width: 420px;
+  padding: 0 2rem;
+  animation: aig-fade-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes aig-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Brand ───────────────────────────────────────────────────── */
+.aig-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.aig-brand-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #1a1a1a;
+}
+
+.aig-brand-name {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #1a1a1a;
+}
+
+/* ── Divider ─────────────────────────────────────────────────── */
+.aig-divider {
+  width: 40px;
+  height: 1px;
+  background: #d4d4d0;
+  margin-bottom: 2rem;
+}
+
+/* ── Clock icon ──────────────────────────────────────────────── */
+.aig-icon-wrap {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #efefed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+/* ── Heading ─────────────────────────────────────────────────── */
+.aig-heading {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  text-align: center;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  margin: 0 0 0.875rem;
+}
+
+/* ── Body text ───────────────────────────────────────────────── */
+.aig-body {
+  font-size: 0.875rem;
+  color: #6b6b6b;
+  text-align: center;
+  line-height: 1.7;
+  margin: 0 0 2rem;
+  max-width: 340px;
+}
+
+/* ── CTA button (Squarespace dark pill) ──────────────────────── */
+.aig-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.8rem 2.5rem;
+  background: #1a1a1a;
+  color: #fff;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+  margin-bottom: 1.5rem;
+}
+
+.aig-cta:hover {
+  background: #333;
+}
+
+.aig-cta:active {
+  transform: scale(0.98);
+}
+
+/* ── Footer note ─────────────────────────────────────────────── */
+.aig-note {
+  font-size: 0.7rem;
+  color: #ababab;
+  text-align: center;
+  letter-spacing: 0.02em;
+  margin: 0;
+}

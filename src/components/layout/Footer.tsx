@@ -1,8 +1,13 @@
 import { Instagram, Facebook, Twitter, Mail, MapPin, Phone } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import logoWhite from '../../assets/Photo/logo-white.png';
 
 export const Footer = () => {
+  const location = useLocation();
+  const isAdminPage = location.pathname.startsWith('/admin');
+
+  if (isAdminPage) return null;
+
   return (
     <footer className="bg-primary-black text-pure-white py-20 lg:py-32">
       <div className="container-custom grid grid-cols-1 md:grid-cols-4 gap-12 lg:gap-20">

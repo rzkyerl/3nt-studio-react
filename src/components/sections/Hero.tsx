@@ -1,24 +1,48 @@
 import { motion } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 import { Button } from '../ui/Button';
-import heroVideo from '../../assets/Video/cinematic-bg.mp4';
-
+import heroVideoDefault from '../../assets/Video/cinematic-bg.mp4';
 import { Link } from 'react-router-dom';
 
-export const Hero = () => {
+export const Hero = ({ data }: { data: any }) => {
+  const displayData = {
+    heroTitle: data?.heroTitle || 'Capture Your Best Moments',
+    heroSubtitle: data?.heroSubtitle || 'Professional Photography Studio',
+    heroVideoUrl: data?.heroVideoUrl || '',
+    heroImageUrl: data?.heroImageUrl || ''
+  };
+
   return (
     <section className="relative h-screen flex items-center justify-center overflow-hidden">
-      {/* Background Video */}
-      <video 
-        className="absolute inset-0 w-full h-full object-cover z-0 scale-105"
-        autoPlay
-        muted
-        loop
-        playsInline
-      >
-        <source src={heroVideo} type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
+      {/* Background Media */}
+      {displayData.heroVideoUrl ? (
+        <video 
+          className="absolute inset-0 w-full h-full object-cover z-0 scale-105"
+          autoPlay
+          muted
+          loop
+          playsInline
+          key={displayData.heroVideoUrl}
+        >
+          <source src={displayData.heroVideoUrl} type="video/mp4" />
+        </video>
+      ) : displayData.heroImageUrl ? (
+        <img 
+          src={displayData.heroImageUrl} 
+          className="absolute inset-0 w-full h-full object-cover z-0 scale-105"
+          alt="Hero Background"
+        />
+      ) : (
+        <video 
+          className="absolute inset-0 w-full h-full object-cover z-0 scale-105"
+          autoPlay
+          muted
+          loop
+          playsInline
+        >
+          <source src={heroVideoDefault} type="video/mp4" />
+        </video>
+      )}
       
       {/* Overlay */}
       <div className="absolute inset-0 bg-black/40 z-10" />
@@ -30,10 +54,8 @@ export const Hero = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
           className="text-pure-white text-5xl md:text-7xl lg:text-8xl font-heading mb-6 tracking-tight leading-tight"
-        >
-          Capture Your <br />
-          <span className="italic font-light">Best Moments</span>
-        </motion.h1>
+          dangerouslySetInnerHTML={{ __html: displayData.heroTitle.replace('\n', '<br />') }}
+        />
         
         <motion.p 
           initial={{ opacity: 0, y: 20 }}
@@ -41,7 +63,7 @@ export const Hero = () => {
           transition={{ duration: 0.8, delay: 0.4 }}
           className="text-pure-white/80 text-lg md:text-xl font-body mb-10 tracking-widest uppercase"
         >
-          Professional Photography Studio
+          {displayData.heroSubtitle}
         </motion.p>
 
         <motion.div 

@@ -1,39 +1,10 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Download, RefreshCw, Sparkles, Palette, Calendar, Share2 } from 'lucide-react';
+import { Download, RefreshCw, Palette, Calendar, Share2, Filter } from 'lucide-react';
+import { cn } from '../../lib/utils';
 import logoBlack from '../../assets/Photo/logo-black.png';
 import logoWhite from '../../assets/Photo/logo-white.png';
 
-// Import Frames
-import frame1 from '../../assets/Photo/Photobox Strip/1.png';
-import frame2 from '../../assets/Photo/Photobox Strip/2.png';
-import frame3 from '../../assets/Photo/Photobox Strip/3.png';
-import frame4 from '../../assets/Photo/Photobox Strip/4.png';
-import frame5 from '../../assets/Photo/Photobox Strip/5.png';
-import frame6 from '../../assets/Photo/Photobox Strip/6.png';
-import frame7 from '../../assets/Photo/Photobox Strip/7.png';
-import frame8 from '../../assets/Photo/Photobox Strip/8.png';
-import frame9 from '../../assets/Photo/Photobox Strip/9.png';
-import frame10 from '../../assets/Photo/Photobox Strip/10.png';
-import frame11 from '../../assets/Photo/Photobox Strip/11.png';
-import frame12 from '../../assets/Photo/Photobox Strip/12.png';
-import frame13 from '../../assets/Photo/Photobox Strip/13.png';
-
-const STRIP_FRAMES = [
-  { id: 'frame1', src: frame1 },
-  { id: 'frame2', src: frame2 },
-  { id: 'frame3', src: frame3 },
-  { id: 'frame4', src: frame4 },
-  { id: 'frame5', src: frame5 },
-  { id: 'frame6', src: frame6 },
-  { id: 'frame7', src: frame7 },
-  { id: 'frame8', src: frame8 },
-  { id: 'frame9', src: frame9 },
-  { id: 'frame10', src: frame10 },
-  { id: 'frame11', src: frame11 },
-  { id: 'frame12', src: frame12 },
-  { id: 'frame13', src: frame13 },
-];
 
 type State = 'START' | 'SETUP' | 'CAMERA' | 'RESULT';
 type LayoutType = '1x3' | '1x4' | '2x2';
@@ -42,22 +13,6 @@ interface CapturedPhoto {
   id: number;
   url: string;
 }
-
-interface Sticker {
-  id: string;
-  emoji: string;
-}
-
-const STICKERS: Sticker[] = [
-  { id: 'heart', emoji: '❤️' },
-  { id: 'sparkles', emoji: '✨' },
-  { id: 'star', emoji: '⭐' },
-  { id: 'camera', emoji: '📸' },
-  { id: 'smile', emoji: '😊' },
-  { id: 'cool', emoji: '😎' },
-  { id: 'cat', emoji: '🐱' },
-  { id: 'bear', emoji: '🧸' },
-];
 
 const FRAME_COLORS = [
   { name: 'Pure White', value: '#FFFFFF' },
@@ -68,20 +23,38 @@ const FRAME_COLORS = [
   { name: 'Cream', value: '#FFFBEB' },
 ];
 
+const FILTERS = [
+  { name: 'Original', value: 'none' },
+  { name: 'B&W', value: 'grayscale(100%)' },
+  { name: 'Vintage', value: 'sepia(50%) contrast(110%)' },
+  { name: 'Warm', value: 'sepia(20%) brightness(110%) saturate(120%)' },
+  { name: 'Cool', value: 'hue-rotate(10deg) saturate(90%) brightness(105%)' },
+  { name: 'Dramatic', value: 'contrast(150%) brightness(90%)' },
+];
+
+const isColorDark = (hex: string) => {
+  if (!hex.startsWith('#')) return false;
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+  return brightness < 128;
+};
+
 export const Photobooth = () => {
   const [state, setState] = useState<State>('START');
   const [layout, setLayout] = useState<LayoutType>('1x4');
   const [photos, setPhotos] = useState<CapturedPhoto[]>([]);
-  const [currentCaptureIndex, setCurrentCaptureIndex] = useState(0);
+  const [currentCaptureIndex, setCurrentCaptureIndex] = useState(1);
   const [countdown, setCountdown] = useState<number | null>(null);
+  const [isCapturing, setIsCapturing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   
   // Customization States
   const [frameColor, setFrameColor] = useState('#FFFFFF');
-  const [selectedFrame, setSelectedFrame] = useState<string | null>(null);
+  const [selectedFilter, setSelectedFilter] = useState('none');
   const [showDate, setShowDate] = useState(true);
-  const [appliedStickers, setAppliedStickers] = useState<{ id: string, emoji: string, x: number, y: number }[]>([]);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -161,43 +134,46 @@ export const Photobooth = () => {
     return null;
   }, []);
 
-  const startAutoCaptureFlow = useCallback(async () => {
-    const photoCount = getPhotoCount(layout);
-    const newPhotos: CapturedPhoto[] = [];
-    setPhotos([]);
+  const handleCapture = useCallback(async () => {
+    if (isCapturing) return;
     
-    for (let i = 0; i < photoCount; i++) {
-      setCurrentCaptureIndex(i + 1);
-      
-      // Countdown
-      for (let c = 3; c > 0; c--) {
-        setCountdown(c);
-        await new Promise(r => setTimeout(r, 1000));
-      }
-      
-      setCountdown(null);
-      const photoUrl = captureSinglePhoto();
-      if (photoUrl) {
-        newPhotos.push({ id: i, url: photoUrl });
-        setPhotos([...newPhotos]);
-      }
-      
-      await new Promise(r => setTimeout(r, 500));
+    setIsCapturing(true);
+    const photoCount = getPhotoCount(layout);
+    
+    // Countdown before each manual capture
+    for (let c = 3; c > 0; c--) {
+      setCountdown(c);
+      await new Promise(r => setTimeout(r, 1000));
     }
     
-    stopCamera();
-    setState('RESULT');
-  }, [layout, captureSinglePhoto]);
+    setCountdown(null);
+    const photoUrl = captureSinglePhoto();
+    
+    if (photoUrl) {
+      const newPhoto = { id: photos.length, url: photoUrl };
+      const updatedPhotos = [...photos, newPhoto];
+      setPhotos(updatedPhotos);
+      
+      if (updatedPhotos.length >= photoCount) {
+        // Finished capturing all photos
+        stopCamera();
+        setState('RESULT');
+      } else {
+        // Move to next photo
+        setCurrentCaptureIndex(updatedPhotos.length + 1);
+      }
+    }
+    
+    setIsCapturing(false);
+  }, [layout, captureSinglePhoto, photos, isCapturing]);
 
   useEffect(() => {
-    let timer: any;
-    
     // Function to attach stream to video element
     const attachStream = async () => {
       if (state === 'CAMERA' && streamRef.current) {
         // Wait a bit for the DOM to settle and ref to be attached
         if (!videoRef.current) {
-          timer = setTimeout(attachStream, 100);
+          setTimeout(attachStream, 100);
           return;
         }
 
@@ -205,11 +181,6 @@ export const Photobooth = () => {
           videoRef.current.srcObject = streamRef.current;
           await videoRef.current.play();
           console.log("Camera stream attached and playing");
-          
-          // Start auto capture flow
-          timer = setTimeout(() => {
-            startAutoCaptureFlow();
-          }, 1500);
         } catch (err) {
           console.error("Error playing video:", err);
           setError("Failed to start video preview. Please try again.");
@@ -218,11 +189,7 @@ export const Photobooth = () => {
     };
 
     attachStream();
-    
-    return () => {
-      if (timer) clearTimeout(timer);
-    };
-  }, [state, startAutoCaptureFlow]);
+  }, [state]);
 
   const generateStrip = useCallback(async () => {
     if (photos.length === 0) return null;
@@ -260,18 +227,8 @@ export const Photobooth = () => {
     ctx.fillStyle = frameColor;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Draw Custom Frame if selected (behind photos)
-    if (selectedFrame) {
-      try {
-        const frameImg = await loadImage(selectedFrame);
-        ctx.drawImage(frameImg, 0, 0, canvas.width, canvas.height);
-      } catch (err) {
-        console.error("Error loading frame image:", err);
-      }
-    }
-
     // Header Logo Image
-    const isDark = ['#0A0A0A', '#666666'].includes(frameColor);
+    const isDark = isColorDark(frameColor);
     try {
       const logoImg = await loadImage(isDark ? logoWhite : logoBlack);
       const logoWidth = 120;
@@ -295,29 +252,32 @@ export const Photobooth = () => {
           y = padding + headerHeight + Math.floor(index / 2) * (photoHeight + padding);
         }
 
+        ctx.save();
+        ctx.filter = selectedFilter;
         ctx.drawImage(img, x, y, photoWidth, photoHeight);
+        ctx.restore();
       } catch (err) {
         console.error("Error loading captured photo:", err);
       }
     }
 
-    // Stickers
-    appliedStickers.forEach(s => {
-      ctx.font = '40px Arial';
-      ctx.fillText(s.emoji, s.x, s.y);
-    });
-
     // Footer
     if (showDate) {
-      const isDark = ['#0A0A0A', '#666666'].includes(frameColor);
+      const isDark = isColorDark(frameColor);
       ctx.fillStyle = isDark ? '#CCCCCC' : '#666666';
       ctx.font = '16px Inter';
       ctx.textAlign = 'center';
+      ctx.textBaseline = 'alphabetic';
       ctx.fillText(new Date().toLocaleDateString(), canvas.width / 2, canvas.height - 40);
     }
 
-    return canvas.toDataURL('image/png');
-  }, [photos, frameColor, selectedFrame, showDate, layout, appliedStickers]);
+    try {
+      return canvas.toDataURL('image/png');
+    } catch (err) {
+      console.error("Error generating strip:", err);
+      return null;
+    }
+  }, [photos, frameColor, showDate, layout]);
 
   const downloadStrip = async () => {
     const dataUrl = await generateStrip();
@@ -329,18 +289,34 @@ export const Photobooth = () => {
     }
   };
 
-  const shareToWhatsApp = () => {
-    const text = encodeURIComponent("Check out my 3NT Studio Photobooth strip! 📸");
-    window.open(`https://wa.me/?text=${text}`, '_blank');
-  };
+  const shareToWhatsApp = async () => {
+    const dataUrl = await generateStrip();
+    if (!dataUrl) return;
 
-  const addSticker = (emoji: string) => {
-    setAppliedStickers([...appliedStickers, { 
-      id: Math.random().toString(), 
-      emoji, 
-      x: Math.random() * 400 + 50, 
-      y: Math.random() * 800 + 100 
-    }]);
+    const text = "Check out my 3NT Studio Photobooth strip! 📸";
+    
+    try {
+      // Convert dataUrl to Blob
+      const response = await fetch(dataUrl);
+      const blob = await response.blob();
+      const file = new File([blob], 'photobooth-strip.png', { type: 'image/png' });
+
+      if (navigator.share && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: '3NT Photobooth',
+          text: text,
+        });
+      } else {
+        // Fallback for desktop or unsupported browsers
+        const waText = encodeURIComponent(text);
+        window.open(`https://wa.me/?text=${waText}`, '_blank');
+      }
+    } catch (err) {
+      console.error("Error sharing:", err);
+      const waText = encodeURIComponent(text);
+      window.open(`https://wa.me/?text=${waText}`, '_blank');
+    }
   };
 
   return (
@@ -474,13 +450,27 @@ export const Photobooth = () => {
                       initial={{ opacity: 0, scale: 2 }}
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.5 }}
-                      className="absolute inset-0 flex flex-col items-center justify-center bg-black/20 backdrop-blur-[2px]"
+                      className="absolute inset-0 flex flex-col items-center justify-center bg-black/20 backdrop-blur-[2px] z-20"
                     >
                       <span className="text-[12rem] font-heading font-bold">{countdown}</span>
                       <span className="text-2xl uppercase tracking-[0.5em] font-light -mt-8">Get Ready</span>
                     </motion.div>
                   )}
                 </AnimatePresence>
+
+                {/* Capture Button Overlay */}
+                <div className="absolute bottom-32 left-0 right-0 flex items-center justify-center pointer-events-none z-30">
+                  {!isCapturing && countdown === null && (
+                    <motion.button
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      onClick={handleCapture}
+                      className="pointer-events-auto w-20 h-20 rounded-full bg-white border-8 border-white/20 flex items-center justify-center shadow-2xl hover:scale-110 transition-transform active:scale-95 group"
+                    >
+                      <div className="w-12 h-12 rounded-full border-2 border-black/10 group-hover:bg-black/5 transition-colors" />
+                    </motion.button>
+                  )}
+                </div>
 
                 {/* Progress Indicator */}
                 <div className="absolute bottom-10 left-0 right-0 flex flex-col items-center gap-4">
@@ -502,7 +492,7 @@ export const Photobooth = () => {
               </div>
 
               <button 
-                onClick={() => { stopCamera(); setState('START'); }}
+                onClick={() => { stopCamera(); setState('START'); setCurrentCaptureIndex(1); setPhotos([]); }}
                 className="mt-12 text-white/50 hover:text-white uppercase tracking-widest text-xs transition-colors"
               >
                 Cancel Session
@@ -521,36 +511,43 @@ export const Photobooth = () => {
               {/* Photo Strip Preview */}
               <div className="flex justify-center order-2 lg:order-1 sticky top-32">
                 <div 
-                  className="relative p-6 shadow-[0_40px_80px_-15px_rgba(0,0,0,0.6)] transition-colors duration-500 overflow-hidden"
-                  style={{ backgroundColor: frameColor }}
+                  className="relative shadow-[0_40px_80px_-15px_rgba(0,0,0,0.6)] transition-colors duration-500 overflow-hidden"
+                  style={{ 
+                    backgroundColor: frameColor,
+                    width: layout === '2x2' ? '320px' : '220px',
+                    height: 'auto',
+                    aspectRatio: layout === '2x2' ? '920/1446' : `480/${(533 * getPhotoCount(layout)) + (40 * (getPhotoCount(layout) + 1)) + 80 + 120}`
+                  }}
                 >
-                  {/* Custom Frame Background */}
-                  {selectedFrame && (
-                    <img 
-                      src={selectedFrame} 
-                      alt="" 
-                      className="absolute inset-0 w-full h-full object-fill z-0 pointer-events-none"
-                    />
-                  )}
-
-                  <div className="flex flex-col gap-4 relative z-10">
+                  <div className="relative z-10 w-full h-full flex flex-col" style={{ padding: '8.33%' }}>
                     {/* Header Logo */}
-                    <div className="flex justify-center mb-2">
+                    <div className="flex justify-center" style={{ marginBottom: '4.16%', height: '4.16%' }}>
                       <img 
-                        src={(['#0A0A0A', '#666666'].includes(frameColor)) ? logoWhite : logoBlack} 
+                        src={isColorDark(frameColor) ? logoWhite : logoBlack} 
                         alt="3NT STUDIO" 
-                        className="h-8 w-auto"
+                        className="h-full w-auto object-contain"
                       />
                     </div>
 
                     {/* Photos Layout */}
-                    <div className={cn(
-                      "grid gap-4",
-                      layout === '2x2' ? 'grid-cols-2' : 'grid-cols-1'
-                    )}>
+                    <div 
+                      className={cn(
+                        "grid",
+                        layout === '2x2' ? 'grid-cols-2' : 'grid-cols-1'
+                      )}
+                      style={{ 
+                        gap: '8.33%',
+                        marginTop: '4.16%' 
+                      }}
+                    >
                       {photos.map(photo => (
-                        <div key={photo.id} className="w-[200px] md:w-[280px] aspect-[3/4] bg-black/10 overflow-hidden relative">
-                          <img src={photo.url} alt="" className="w-full h-full object-cover" />
+                        <div key={photo.id} className="w-full aspect-[3/4] bg-black/10 overflow-hidden relative">
+                          <img 
+                            src={photo.url} 
+                            alt="" 
+                            className="w-full h-full object-cover" 
+                            style={{ filter: selectedFilter }}
+                          />
                         </div>
                       ))}
                     </div>
@@ -558,9 +555,9 @@ export const Photobooth = () => {
                     {/* Footer */}
                     {showDate && (
                       <div className={cn(
-                        "text-center text-[10px] uppercase tracking-[0.3em] mt-4 opacity-50",
-                        ['#0A0A0A', '#666666'].includes(frameColor) ? 'text-white' : 'text-black'
-                      )}>
+                        "text-center uppercase tracking-[0.3em] opacity-50 absolute bottom-[4.16%] left-0 right-0",
+                        isColorDark(frameColor) ? 'text-white' : 'text-black'
+                      )} style={{ fontSize: '2.5%' }}>
                         {new Date().toLocaleDateString()}
                       </div>
                     )}
@@ -576,42 +573,12 @@ export const Photobooth = () => {
                 </div>
 
                 <div className="space-y-10">
-                  {/* Custom Frames */}
-                  <div className="space-y-4">
-                    <label className="flex items-center gap-3 text-xs uppercase tracking-widest font-bold">
-                      <Sparkles size={16} /> Frame Design
-                    </label>
-                    <div className="grid grid-cols-4 gap-2">
-                      <button 
-                        onClick={() => setSelectedFrame(null)}
-                        className={cn(
-                          "aspect-[3/4] border-2 flex items-center justify-center text-[8px] uppercase font-bold text-center p-1 transition-all",
-                          selectedFrame === null ? "border-white bg-white/20" : "border-white/10 hover:border-white/30"
-                        )}
-                      >
-                        No Frame
-                      </button>
-                      {STRIP_FRAMES.map((frame, idx) => (
-                        <button 
-                          key={frame.id}
-                          onClick={() => setSelectedFrame(frame.src)}
-                          className={cn(
-                            "aspect-[3/4] border-2 overflow-hidden transition-all",
-                            selectedFrame === frame.src ? "border-white scale-105" : "border-white/10 hover:border-white/30"
-                          )}
-                        >
-                          <img src={frame.src} alt={`Frame ${idx + 1}`} className="w-full h-full object-cover" />
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
                   {/* Frame Color */}
                   <div className="space-y-4">
                     <label className="flex items-center gap-3 text-xs uppercase tracking-widest font-bold">
                       <Palette size={16} /> Frame Color
                     </label>
-                    <div className="flex flex-wrap gap-4">
+                    <div className="flex flex-wrap gap-4 items-center">
                       {FRAME_COLORS.map(color => (
                         <button 
                           key={color.value}
@@ -623,6 +590,40 @@ export const Photobooth = () => {
                           style={{ backgroundColor: color.value }}
                           title={color.name}
                         />
+                      ))}
+                      {/* Custom Color Picker */}
+                      <div className="relative group">
+                        <input 
+                          type="color"
+                          value={frameColor}
+                          onChange={(e) => setFrameColor(e.target.value)}
+                          className="w-10 h-10 rounded-full border-2 border-transparent bg-transparent cursor-pointer overflow-hidden"
+                          style={{ padding: 0, appearance: 'none' }}
+                        />
+                        <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-white text-black text-[8px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap font-bold uppercase">
+                          Custom Color
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Photo Filters */}
+                  <div className="space-y-4">
+                    <label className="flex items-center gap-3 text-xs uppercase tracking-widest font-bold">
+                      <Filter size={16} /> Photo Filter
+                    </label>
+                    <div className="grid grid-cols-3 gap-2">
+                      {FILTERS.map(filter => (
+                        <button 
+                          key={filter.name}
+                          onClick={() => setSelectedFilter(filter.value)}
+                          className={cn(
+                            "py-3 border transition-all duration-300 text-[10px] uppercase tracking-widest font-bold",
+                            selectedFilter === filter.value ? "bg-white text-black" : "border-white/20 text-white hover:border-white"
+                          )}
+                        >
+                          {filter.name}
+                        </button>
                       ))}
                     </div>
                   </div>
@@ -642,25 +643,6 @@ export const Photobooth = () => {
                       {showDate ? 'Visible' : 'Hidden'}
                     </button>
                   </div>
-
-                  {/* Stickers */}
-                  <div className="space-y-4">
-                    <label className="flex items-center gap-3 text-xs uppercase tracking-widest font-bold">
-                      <Sparkles size={16} /> Add Stickers
-                    </label>
-                    <div className="grid grid-cols-4 md:grid-cols-8 gap-4">
-                      {STICKERS.map(sticker => (
-                        <button 
-                          key={sticker.id}
-                          onClick={() => addSticker(sticker.emoji)}
-                          className="w-10 h-10 flex items-center justify-center bg-white/5 hover:bg-white/10 rounded-lg text-2xl transition-all hover:scale-110"
-                        >
-                          {sticker.emoji}
-                        </button>
-                      ))}
-                    </div>
-                    <p className="text-[10px] text-medium-gray italic">*Stickers will be added randomly to the strip</p>
-                  </div>
                 </div>
 
                 <div className="flex flex-col gap-4 pt-8 border-t border-white/10">
@@ -679,7 +661,7 @@ export const Photobooth = () => {
                       <Share2 size={14} /> WhatsApp
                     </button>
                     <button 
-                      onClick={() => { setState('SETUP'); setPhotos([]); setAppliedStickers([]); }}
+                      onClick={() => { setState('SETUP'); setPhotos([]); setCurrentCaptureIndex(1); }}
                       className="py-4 border border-white/20 text-white font-bold uppercase tracking-[0.2em] text-[10px] hover:bg-white hover:text-black transition-all flex items-center justify-center gap-2"
                     >
                       <RefreshCw size={14} /> Retake
@@ -696,5 +678,3 @@ export const Photobooth = () => {
     </section>
   );
 };
-
-const cn = (...classes: any[]) => classes.filter(Boolean).join(' ');

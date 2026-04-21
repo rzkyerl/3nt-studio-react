@@ -7,6 +7,7 @@ import Pricing from './pages/Pricing';
 import Location from './pages/Location';
 import Booking from './pages/Booking';
 import Photobooth from './pages/Photobooth';
+import AdminDashboard from './pages/Admin/Dashboard';
 import './App.css';
 
 function App() {
@@ -22,6 +23,9 @@ function App() {
             <Route path="/location" element={<Location />} />
             <Route path="/booking" element={<Booking />} />
             <Route path="/photobooth" element={<Photobooth />} />
+            
+            {/* Admin Routes */}
+            <Route path="/admin/*" element={<AdminDashboard />} />
           </Routes>
         </div>
         <Footer />

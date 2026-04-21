@@ -1,8 +1,9 @@
 import { motion } from 'framer-motion';
 import { cn } from '../../lib/utils';
+import { useState, useEffect } from 'react';
+import * as adminService from '../../services/adminService';
 
-// Import New Portfolio Photos
-// MLDSPOT
+// Import New Portfolio Photos (Keep as static fallback if needed)
 import mld1 from '../../assets/Photo/mldspot/1.png';
 import mld2 from '../../assets/Photo/mldspot/2.png';
 import mld3 from '../../assets/Photo/mldspot/3.png';
@@ -43,8 +44,9 @@ import asdp5 from '../../assets/Photo/asdp/5.png';
 import asdp6 from '../../assets/Photo/asdp/6.png';
 
 interface PortfolioItem {
-  id: number;
+  id: string | number;
   image?: string;
+  url?: string; // from firebase
   video?: string;
   className: string;
 }
@@ -54,7 +56,7 @@ interface ProjectGroup {
   items: PortfolioItem[];
 }
 
-const portfolioGroups: ProjectGroup[] = [
+const staticPortfolioGroups: ProjectGroup[] = [
   {
     title: "MLDSPOT SBJT",
     items: [
@@ -100,9 +102,9 @@ const portfolioGroups: ProjectGroup[] = [
     ]
   },
   {
-    title: "ASDP",
+    title: "ASDP Indonesia Ferry",
     items: [
-      { id: 25, image: asdp1, className: "md:col-span-1 md:row-span-1" },
+      { id: 25, image: asdp1, className: "md:col-span-2 md:row-span-2" },
       { id: 26, image: asdp2, className: "md:col-span-1 md:row-span-1" },
       { id: 27, image: asdp3, className: "md:col-span-1 md:row-span-1" },
       { id: 28, image: asdp4, className: "md:col-span-1 md:row-span-1" },
@@ -113,81 +115,128 @@ const portfolioGroups: ProjectGroup[] = [
 ];
 
 export const Portfolio = () => {
+  const [dynamicGroups, setDynamicGroups] = useState<ProjectGroup[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPortfolio = async () => {
+      try {
+        const data = await adminService.fetchCollection('portfolio', 'createdAt');
+        
+        if (!data || data.length === 0) {
+          setLoading(false);
+          return;
+        }
+
+        const imagesByGroup: { [key: string]: PortfolioItem[] } = {};
+        
+        data.forEach((item: any) => {
+          const category = item.category || 'Other';
+          
+          if (!imagesByGroup[category]) {
+            imagesByGroup[category] = [];
+          }
+          
+          imagesByGroup[category].push({
+            id: item.id,
+            url: item.url,
+            className: "md:col-span-1 md:row-span-1" 
+          } as PortfolioItem);
+        });
+
+        const groups = Object.keys(imagesByGroup).map(title => ({
+          title,
+          items: imagesByGroup[title]
+        }));
+
+        setDynamicGroups(groups);
+      } catch (error) {
+        console.error("Error fetching portfolio:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPortfolio();
+  }, []);
+
+  const displayGroups = dynamicGroups.length > 0 ? dynamicGroups : staticPortfolioGroups;
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-pure-white flex items-center justify-center">
+        <div className="animate-pulse font-heading font-bold uppercase tracking-widest text-medium-gray">
+          Loading Portfolio...
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <section id="portfolio" className="section-padding bg-light-gray">
+    <section id="portfolio" className="bg-pure-white py-32 overflow-hidden">
       <div className="container-custom">
-        <div className="text-center mb-24 space-y-4">
-          <span className="text-xs uppercase tracking-[0.4em] text-medium-gray font-bold">Our Work</span>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-heading leading-tight italic font-light">
-            Timeless <span className="not-italic font-bold">Moments</span>
-          </h2>
+        <div className="flex flex-col mb-24">
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+          >
+            <h2 className="text-7xl md:text-9xl font-heading font-bold uppercase tracking-tighter leading-none text-primary-black">
+              Featured<br />Work
+            </h2>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="self-end mt-8 max-w-md text-right"
+          >
+            <p className="text-medium-gray uppercase tracking-widest text-xs font-bold leading-relaxed">
+              Capturing moments across Indonesia. From premium weddings to corporate events and creative production.
+            </p>
+          </motion.div>
         </div>
 
-        <div className="space-y-32">
-          {portfolioGroups.map((group, groupIdx) => (
-            <div key={groupIdx} className="space-y-12">
-              {/* Sub-title */}
-              <motion.div 
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
+        <div className="space-y-40">
+          {displayGroups.map((group, groupIndex) => (
+            <div key={group.title} className="space-y-12">
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 className="flex items-center gap-6"
               >
-                <h3 className="text-2xl md:text-3xl font-heading font-bold uppercase tracking-tighter">
-                  {group.title}
-                </h3>
-                <div className="h-[1px] flex-grow bg-primary-black/10" />
+                <span className="text-xs font-bold tracking-[0.5em] text-medium-gray">0{groupIndex + 1}</span>
+                <h3 className="text-3xl md:text-5xl font-heading font-bold uppercase tracking-tighter">{group.title}</h3>
+                <div className="h-[1px] flex-grow bg-border-gray/50" />
               </motion.div>
 
-              {/* Portfolio Grid for this project */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[300px]">
-                {group.items.map((item) => (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 auto-rows-[200px] md:auto-rows-[250px]">
+                {group.items.map((item, index) => (
                   <motion.div
                     key={item.id}
-                    initial={{ opacity: 0, scale: 0.9 }}
+                    initial={{ opacity: 0, scale: 0.95 }}
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}
-                    transition={{ duration: 0.5 }}
+                    transition={{ duration: 0.6, delay: index * 0.1 }}
                     className={cn(
-                      "relative group cursor-pointer overflow-hidden",
+                      "group relative bg-light-gray overflow-hidden cursor-pointer",
                       item.className
                     )}
                   >
-                    {item.video ? (
-                      <video 
-                        src={item.video} 
-                        className="w-full h-full object-cover lg:grayscale transition-all duration-700 group-hover:scale-110 group-hover:grayscale-0"
-                        autoPlay
-                        loop
-                        muted
-                        playsInline
-                      />
-                    ) : (
-                      <img 
-                        src={item.image} 
-                        alt={group.title} 
-                        className="w-full h-full object-cover lg:grayscale transition-all duration-700 group-hover:scale-110 group-hover:grayscale-0"
-                      />
-                    )}
-                    
-                    {/* Overlay on Hover */}
-                    <div className="absolute inset-0 bg-primary-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
-                      <h3 className="text-xl font-heading text-pure-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-100">
-                        {group.title}
-                      </h3>
-                    </div>
+                    <img
+                      src={item.url || item.image}
+                      alt={`${group.title} ${index + 1}`}
+                      className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 ease-out scale-100 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-primary-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   </motion.div>
                 ))}
               </div>
             </div>
           ))}
-        </div>
-
-        <div className="mt-20 text-center">
-          <a href="#" className="inline-flex items-center gap-6 group">
-            <span className="text-sm uppercase tracking-[0.3em] font-bold">View Full Gallery</span>
-            <div className="w-12 h-[1px] bg-primary-black transition-all duration-300 group-hover:w-20" />
-          </a>
         </div>
       </div>
     </section>

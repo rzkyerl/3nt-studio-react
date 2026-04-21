@@ -9,7 +9,7 @@ import logoWhite from '../../assets/Photo/logo-white.png';
 const navLinks = [
   { name: 'Home', href: '/' },
   { name: 'Portofolio', href: '/portfolio' },
-  { name: 'Pricing', href: '/pricing' },
+  { name: 'Services', href: '/pricing' },
   { name: 'Location', href: '/location' },
   { name: 'Booking', href: '/booking' },
   { name: 'Photobooth', href: '/photobooth' },
@@ -21,6 +21,7 @@ export const Navbar = () => {
   const location = useLocation();
 
   const isHomePage = location.pathname === '/';
+  const isAdminPage = location.pathname.startsWith('/admin');
 
   useEffect(() => {
     const handleScroll = () => {
@@ -29,6 +30,8 @@ export const Navbar = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  if (isAdminPage) return null;
 
   // Use scrolled style (white bg, black text) for all other pages
   const navStyle = isHomePage && !isScrolled ? 'transparent' : 'scrolled';

@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
+import { useState, type FormEvent } from 'react';
 import { motion } from 'framer-motion';
-import { MapPin, Phone, Mail, Clock } from 'lucide-react';
+import { MapPin, Phone, Mail, Clock, Loader2 } from 'lucide-react';
+import { generateBookingPDF } from '../../utils/pdfGenerator';
+import { uploadBookingPDFToSanity } from '../../utils/sanityStorage';
+import { client } from '../../sanity/client';
 
 export const LocationSection = () => {
   return (
@@ -91,6 +94,7 @@ export const LocationSection = () => {
 };
 
 export const BookingSection = () => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -99,31 +103,61 @@ export const BookingSection = () => {
     notes: ''
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsSubmitting(true);
     
-    // Construct WhatsApp message template
-    const adminPhoneNumber = "6281212345678"; // Using the number from LocationSection
-    const message = `*NEW BOOKING RESERVATION - 3NT STUDIO*
+    try {
+      // 1. Generate PDF
+      const pdfBlob = generateBookingPDF(formData);
+      
+      // 2. Upload to Sanity Storage
+      const fileName = `booking_${Date.now()}_${formData.name.replace(/\s+/g, '_')}.pdf`;
+      const pdfUrl = await uploadBookingPDFToSanity(pdfBlob, fileName);
+
+      // 3. Save to Sanity for Dashboard
+      await client.create({
+        _type: 'booking',
+        name: formData.name,
+        phone: formData.phone,
+        date: formData.date,
+        package: formData.package,
+        notes: formData.notes,
+        pdfUrl: pdfUrl,
+        status: 'pending',
+        createdAt: new Date().toISOString(),
+      });
+
+      // 4. Construct WhatsApp message template
+      const adminPhoneNumber = "6285697229466"; // Updated to match the number in LocationSection
+      const message = `*NEW BOOKING RESERVATION - 3NT STUDIO*
 ----------------------------------------
 *Name:* ${formData.name}
 *Phone:* ${formData.phone}
 *Date:* ${formData.date}
 *Package:* ${formData.package || 'Custom Request'}
 ----------------------------------------
+*Booking PDF:* ${pdfUrl}
+----------------------------------------
 *Notes:* 
 ${formData.notes || '-'}
 ----------------------------------------
 Sent from 3ntstudio.com`;
 
-    const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://wa.me/${adminPhoneNumber}?text=${encodedMessage}`;
+      const encodedMessage = encodeURIComponent(message);
+      const whatsappUrl = `https://wa.me/${adminPhoneNumber}?text=${encodedMessage}`;
 
-    // Open WhatsApp in a new tab
-    window.open(whatsappUrl, '_blank');
+      // Open WhatsApp in a new tab
+      window.open(whatsappUrl, '_blank');
 
-    alert('Redirecting to WhatsApp to complete your reservation...');
-    setFormData({ name: '', phone: '', date: '', package: '', notes: '' });
+      alert('Booking successful! Redirecting to WhatsApp to complete your reservation...');
+      setFormData({ name: '', phone: '', date: '', package: '', notes: '' });
+    } catch (error) {
+      console.error('Error submitting booking:', error);
+      alert('There was an error processing your booking. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -207,9 +241,17 @@ Sent from 3ntstudio.com`;
               <div className="pt-4">
                 <button 
                   type="submit" 
-                  className="w-full bg-primary-black text-pure-white py-4 uppercase tracking-[0.2em] text-xs font-bold hover:bg-medium-gray transition-colors duration-300"
+                  disabled={isSubmitting}
+                  className="w-full bg-primary-black text-pure-white py-4 uppercase tracking-[0.2em] text-xs font-bold hover:bg-medium-gray transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
-                  Reserve Now
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="animate-spin" size={16} />
+                      Processing...
+                    </>
+                  ) : (
+                    'Reserve Now'
+                  )}
                 </button>
               </div>
             </form>

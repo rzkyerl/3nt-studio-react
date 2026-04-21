@@ -1,10 +1,12 @@
 import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import * as adminService from '../../services/adminService';
 import sonyKit from '../../assets/Photo/Pricing/sony-kit-camera.jpg';
-import frame1 from '../../assets/Photo/Photobox Strip/1.png';
-import frame2 from '../../assets/Photo/Photobox Strip/2.png';
-import frame3 from '../../assets/Photo/Photobox Strip/3.png';
-import frame5 from '../../assets/Photo/Photobox Strip/5.png';
-import frame6 from '../../assets/Photo/Photobox Strip/6.png';
+import frame1 from '../../assets/Photo/asdp/2.png';
+import frame2 from '../../assets/Photo/fifa/2.png';
+import frame3 from '../../assets/Photo/mldspot/2.png';
+import frame5 from '../../assets/Photo/bph-migas/2.png';
+import frame6 from '../../assets/Photo/golf-freindly-tournament/2.png';
 import multicamImg from '../../assets/Photo/Production/multicam-production.png';
 
 // Import Portfolio Images for visuals
@@ -16,6 +18,16 @@ import bph2 from '../../assets/Photo/bph-migas/2.png';
 import fifa1 from '../../assets/Photo/fifa/1.png';
 import fifa2 from '../../assets/Photo/fifa/2.png';
 import asdp1 from '../../assets/Photo/asdp/1.png';
+
+interface PricingPackage {
+  id: string;
+  title: string;
+  subtitle?: string;
+  category: string;
+  prices: { label: string; price: string }[];
+  features?: string[];
+  order: number;
+}
 
 const services = [
   { name: "CLASSIC PHOTOBOOTH", active: false },
@@ -105,6 +117,26 @@ const PriceRow = ({ label, price }: { label: string; price: string }) => (
 );
 
 export const Pricing = () => {
+  const [dynamicPackages, setDynamicPackages] = useState<PricingPackage[]>([]);
+
+  useEffect(() => {
+    const fetchPricing = async () => {
+      try {
+        const data = await adminService.fetchCollection('pricing', 'order');
+        if (data) {
+          setDynamicPackages(data as PricingPackage[]);
+        }
+      } catch (error) {
+        console.error("Fetch Pricing Error:", error);
+      }
+    };
+    fetchPricing();
+  }, []);
+
+  const getPackagesByCategory = (category: string) => {
+    return dynamicPackages.filter(pkg => pkg.category === category);
+  };
+
   return (
     <div className="space-y-48 py-24 bg-white">
       {/* OUR SERVICES OVERVIEW */}
@@ -174,7 +206,37 @@ export const Pricing = () => {
         </div>
       </section>
 
-      {/* CLASSIC PHOTOBOOTH */}
+      {/* DYNAMIC PACKAGES BY CATEGORY */}
+      {['Photobooth', 'Matrix', 'Multicam', 'Broadcast'].map((cat) => {
+        const pkgs = getPackagesByCategory(cat);
+        if (pkgs.length === 0) return null;
+        
+        return (
+          <section key={cat} className="relative overflow-hidden">
+            <div className="container-custom relative z-10">
+              <SectionHeader 
+                title={`${cat} Packages`} 
+                bgText={cat}
+              />
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {pkgs.map((pkg) => (
+                  <PackageCard key={pkg.id}>
+                    <PackageTitle title={pkg.title} />
+                    {pkg.subtitle && <p className="text-xs text-medium-gray mb-4 uppercase tracking-widest">{pkg.subtitle}</p>}
+                    <div className="space-y-2">
+                      {pkg.prices.map((p, i) => (
+                        <PriceRow key={i} label={p.label} price={p.price} />
+                      ))}
+                    </div>
+                  </PackageCard>
+                ))}
+              </div>
+            </div>
+          </section>
+        );
+      })}
+
+      {/* CLASSIC PHOTOBOOTH (KEEPING AS EXAMPLE/FALLBACK) */}
       <section className="relative overflow-hidden">
         <div className="container-custom relative z-10">
           <SectionHeader 
