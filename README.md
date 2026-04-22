@@ -61,10 +61,10 @@ VITE_SANITY_TOKEN=your_sanity_write_token
 
 ## 📂 Project Structure
 
-- `src/components/sections`: UI sections (Hero, Portfolio, Booking, etc.)
-- `src/sanity`: Sanity schemas and client configuration.
-- `src/utils`: Utility functions for PDF generation and storage.
-- `src/assets`: Cinematic videos and high-resolution photos.
+- `src/frontend`: Public website app (pages, sections, UI components, assets, utils, services).
+- `src/backend/admin`: Admin domain components and session management.
+- `src/backend/sanity`: Sanity client, studio components, and schemas.
+- `src/App.tsx`: Domain-based routing (`main site` vs `admin`).
 
 ---
 Crafted with ❤️ for **3NT Studio**.

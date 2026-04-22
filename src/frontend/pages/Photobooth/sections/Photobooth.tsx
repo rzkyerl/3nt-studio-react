@@ -1,0 +1,680 @@
+import { useState, useRef, useCallback, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Download, RefreshCw, Palette, Calendar, Share2, Filter } from 'lucide-react';
+import { cn } from '../../../lib/utils';
+import logoBlack from '../../../assets/Photo/logo-black.png';
+import logoWhite from '../../../assets/Photo/logo-white.png';
+
+
+type State = 'START' | 'SETUP' | 'CAMERA' | 'RESULT';
+type LayoutType = '1x3' | '1x4' | '2x2';
+
+interface CapturedPhoto {
+  id: number;
+  url: string;
+}
+
+const FRAME_COLORS = [
+  { name: 'Pure White', value: '#FFFFFF' },
+  { name: 'Deep Black', value: '#0A0A0A' },
+  { name: 'Soft Pink', value: '#FFE5EC' },
+  { name: 'Sky Blue', value: '#E0F2FE' },
+  { name: 'Sage Green', value: '#F0FDF4' },
+  { name: 'Cream', value: '#FFFBEB' },
+];
+
+const FILTERS = [
+  { name: 'Original', value: 'none' },
+  { name: 'B&W', value: 'grayscale(100%)' },
+  { name: 'Vintage', value: 'sepia(50%) contrast(110%)' },
+  { name: 'Warm', value: 'sepia(20%) brightness(110%) saturate(120%)' },
+  { name: 'Cool', value: 'hue-rotate(10deg) saturate(90%) brightness(105%)' },
+  { name: 'Dramatic', value: 'contrast(150%) brightness(90%)' },
+];
+
+const isColorDark = (hex: string) => {
+  if (!hex.startsWith('#')) return false;
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+  return brightness < 128;
+};
+
+export const Photobooth = () => {
+  const [state, setState] = useState<State>('START');
+  const [layout, setLayout] = useState<LayoutType>('1x4');
+  const [photos, setPhotos] = useState<CapturedPhoto[]>([]);
+  const [currentCaptureIndex, setCurrentCaptureIndex] = useState(1);
+  const [countdown, setCountdown] = useState<number | null>(null);
+  const [isCapturing, setIsCapturing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  
+  // Customization States
+  const [frameColor, setFrameColor] = useState('#FFFFFF');
+  const [selectedFilter, setSelectedFilter] = useState('none');
+  const [showDate, setShowDate] = useState(true);
+
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  const getPhotoCount = (l: LayoutType) => {
+    if (l === '1x3') return 3;
+    if (l === '1x4') return 4;
+    if (l === '2x2') return 4;
+    return 4;
+  };
+
+  const startCamera = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { 
+          facingMode: 'user',
+          aspectRatio: 3/4,
+          width: { ideal: 1080 },
+          height: { ideal: 1440 }
+        } 
+      });
+      streamRef.current = stream;
+      setError(null);
+      setState('CAMERA');
+    } catch (err) {
+      console.error("Error accessing camera:", err);
+      setError("Unable to access camera. Please check permissions.");
+    }
+  };
+
+  const stopCamera = () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+    }
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+    }
+  };
+
+  const captureSinglePhoto = useCallback(() => {
+    if (videoRef.current && canvasRef.current) {
+      const video = videoRef.current;
+      const canvas = canvasRef.current;
+      
+      canvas.width = 600;
+      canvas.height = 800;
+      
+      const context = canvas.getContext('2d');
+      if (context) {
+        const sourceWidth = video.videoWidth;
+        const sourceHeight = video.videoHeight;
+        const targetRatio = 3/4;
+        
+        let drawWidth = sourceWidth;
+        let drawHeight = sourceHeight;
+        let offsetX = 0;
+        let offsetY = 0;
+
+        if (sourceWidth / sourceHeight > targetRatio) {
+          drawWidth = sourceHeight * targetRatio;
+          offsetX = (sourceWidth - drawWidth) / 2;
+        } else {
+          drawHeight = sourceWidth / targetRatio;
+          offsetY = (sourceHeight - drawHeight) / 2;
+        }
+
+        // Mirror the image horizontally to match the live preview
+        context.save();
+        context.scale(-1, 1);
+        context.drawImage(video, offsetX, offsetY, drawWidth, drawHeight, -canvas.width, 0, canvas.width, canvas.height);
+        context.restore();
+
+        return canvas.toDataURL('image/png');
+      }
+    }
+    return null;
+  }, []);
+
+  const handleCapture = useCallback(async () => {
+    if (isCapturing) return;
+    
+    setIsCapturing(true);
+    const photoCount = getPhotoCount(layout);
+    
+    // Countdown before each manual capture
+    for (let c = 3; c > 0; c--) {
+      setCountdown(c);
+      await new Promise(r => setTimeout(r, 1000));
+    }
+    
+    setCountdown(null);
+    const photoUrl = captureSinglePhoto();
+    
+    if (photoUrl) {
+      const newPhoto = { id: photos.length, url: photoUrl };
+      const updatedPhotos = [...photos, newPhoto];
+      setPhotos(updatedPhotos);
+      
+      if (updatedPhotos.length >= photoCount) {
+        // Finished capturing all photos
+        stopCamera();
+        setState('RESULT');
+      } else {
+        // Move to next photo
+        setCurrentCaptureIndex(updatedPhotos.length + 1);
+      }
+    }
+    
+    setIsCapturing(false);
+  }, [layout, captureSinglePhoto, photos, isCapturing]);
+
+  useEffect(() => {
+    // Function to attach stream to video element
+    const attachStream = async () => {
+      if (state === 'CAMERA' && streamRef.current) {
+        // Wait a bit for the DOM to settle and ref to be attached
+        if (!videoRef.current) {
+          setTimeout(attachStream, 100);
+          return;
+        }
+
+        try {
+          videoRef.current.srcObject = streamRef.current;
+          await videoRef.current.play();
+          console.log("Camera stream attached and playing");
+        } catch (err) {
+          console.error("Error playing video:", err);
+          setError("Failed to start video preview. Please try again.");
+        }
+      }
+    };
+
+    attachStream();
+  }, [state]);
+
+  const generateStrip = useCallback(async () => {
+    if (photos.length === 0) return null;
+    
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return null;
+
+    const photoWidth = 400;
+    const photoHeight = 533; 
+    const padding = 40;
+    const headerHeight = 80;
+    const footerHeight = 120;
+
+    if (layout === '2x2') {
+      canvas.width = (photoWidth * 2) + (padding * 3);
+      canvas.height = (photoHeight * 2) + (padding * 3) + headerHeight + footerHeight;
+    } else {
+      const count = getPhotoCount(layout);
+      canvas.width = photoWidth + (padding * 2);
+      canvas.height = (photoHeight * count) + (padding * (count + 1)) + headerHeight + footerHeight;
+    }
+
+    // Helper to load image
+    const loadImage = (src: string): Promise<HTMLImageElement> => {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = reject;
+        img.src = src;
+      });
+    };
+
+    // Background
+    ctx.fillStyle = frameColor;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Header Logo Image
+    const isDark = isColorDark(frameColor);
+    try {
+      const logoImg = await loadImage(isDark ? logoWhite : logoBlack);
+      const logoWidth = 120;
+      const logoHeight = 40;
+      ctx.drawImage(logoImg, (canvas.width - logoWidth) / 2, padding, logoWidth, logoHeight);
+    } catch (err) {
+      console.error("Error loading logo:", err);
+    }
+
+    // Draw Photos
+    for (let index = 0; index < photos.length; index++) {
+      const photo = photos[index];
+      try {
+        const img = await loadImage(photo.url);
+        
+        let x = padding;
+        let y = padding + headerHeight + (index * (photoHeight + padding));
+
+        if (layout === '2x2') {
+          x = padding + (index % 2) * (photoWidth + padding);
+          y = padding + headerHeight + Math.floor(index / 2) * (photoHeight + padding);
+        }
+
+        ctx.save();
+        ctx.filter = selectedFilter;
+        ctx.drawImage(img, x, y, photoWidth, photoHeight);
+        ctx.restore();
+      } catch (err) {
+        console.error("Error loading captured photo:", err);
+      }
+    }
+
+    // Footer
+    if (showDate) {
+      const isDark = isColorDark(frameColor);
+      ctx.fillStyle = isDark ? '#CCCCCC' : '#666666';
+      ctx.font = '16px Inter';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'alphabetic';
+      ctx.fillText(new Date().toLocaleDateString(), canvas.width / 2, canvas.height - 40);
+    }
+
+    try {
+      return canvas.toDataURL('image/png');
+    } catch (err) {
+      console.error("Error generating strip:", err);
+      return null;
+    }
+  }, [photos, frameColor, showDate, layout]);
+
+  const downloadStrip = async () => {
+    const dataUrl = await generateStrip();
+    if (dataUrl) {
+      const link = document.createElement('a');
+      link.href = dataUrl;
+      link.download = `3nt-photobooth-${Date.now()}.png`;
+      link.click();
+    }
+  };
+
+  const shareToWhatsApp = async () => {
+    const dataUrl = await generateStrip();
+    if (!dataUrl) return;
+
+    const text = "Check out my 3NT Studio Photobooth strip! 📸";
+    
+    try {
+      // Convert dataUrl to Blob
+      const response = await fetch(dataUrl);
+      const blob = await response.blob();
+      const file = new File([blob], 'photobooth-strip.png', { type: 'image/png' });
+
+      if (navigator.share && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: '3NT Photobooth',
+          text: text,
+        });
+      } else {
+        // Fallback for desktop or unsupported browsers
+        const waText = encodeURIComponent(text);
+        window.open(`https://wa.me/?text=${waText}`, '_blank');
+      }
+    } catch (err) {
+      console.error("Error sharing:", err);
+      const waText = encodeURIComponent(text);
+      window.open(`https://wa.me/?text=${waText}`, '_blank');
+    }
+  };
+
+  return (
+    <section id="photobooth" className="min-h-screen bg-[#0A0A0A] text-white flex flex-col items-center justify-center p-6 pt-32">
+      <div className="container-custom w-full max-w-6xl">
+        
+        <AnimatePresence mode="wait">
+          {/* STATE 1: START SCREEN */}
+          {state === 'START' && (
+            <motion.div 
+              key="start-screen"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 1.1 }}
+              className="flex flex-col items-center text-center space-y-12"
+            >
+              <div className="space-y-4">
+                <motion.h1 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-6xl md:text-8xl font-heading font-bold tracking-tighter"
+                >
+                  Online <span className="italic font-light">Photobooth</span>
+                </motion.h1>
+                <p className="text-medium-gray text-xl uppercase tracking-[0.3em]">Capture fun moments instantly</p>
+              </div>
+
+              <div className="flex gap-8 py-12 overflow-hidden opacity-30 grayscale pointer-events-none hidden md:flex">
+                {[1, 2, 3].map(i => (
+                  <div key={i} className="w-32 h-96 bg-white/5 border border-white/10 rounded-sm flex flex-col gap-2 p-2 transform rotate-3 even:-rotate-3 translate-y-4">
+                    {[1, 2, 3, 4].map(j => (
+                      <div key={j} className="flex-grow bg-white/5" />
+                    ))}
+                  </div>
+                ))}
+              </div>
+
+              <button 
+                onClick={() => setState('SETUP')}
+                className="group relative px-12 py-6 bg-white text-black font-bold uppercase tracking-[0.2em] text-sm overflow-hidden transition-all duration-500 hover:text-white"
+              >
+                <span className="relative z-10">Start Session</span>
+                <div className="absolute inset-0 bg-black translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
+              </button>
+            </motion.div>
+          )}
+
+          {/* STATE 2: SETUP SCREEN */}
+          {state === 'SETUP' && (
+            <motion.div 
+              key="setup-screen"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              className="flex flex-col items-center space-y-16"
+            >
+              <div className="text-center space-y-4">
+                <h2 className="text-4xl font-heading font-bold uppercase tracking-tighter">Choose Your Layout</h2>
+                <p className="text-medium-gray uppercase tracking-widest text-xs">Select the style of your photo strip</p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+                {(['1x3', '1x4', '2x2'] as LayoutType[]).map((l) => (
+                  <button
+                    key={l}
+                    onClick={() => setLayout(l)}
+                    className={cn(
+                      "group p-8 border-2 transition-all duration-500 flex flex-col items-center gap-6",
+                      layout === l ? "border-white bg-white/5 scale-105 shadow-2xl" : "border-white/10 hover:border-white/30"
+                    )}
+                  >
+                    <div className={cn(
+                      "grid gap-1 bg-white/10 p-2 rounded-sm transition-transform duration-500 group-hover:scale-110",
+                      l === '2x2' ? 'grid-cols-2' : 'grid-cols-1'
+                    )}>
+                      {Array.from({ length: getPhotoCount(l) }).map((_, i) => (
+                        <div key={i} className="w-12 h-16 bg-white/20" />
+                      ))}
+                    </div>
+                    <span className="text-sm uppercase tracking-widest font-bold">{l.replace('x', ' x ')} Strip</span>
+                  </button>
+                ))}
+              </div>
+
+              <div className="flex flex-col items-center gap-8">
+                <button 
+                  onClick={startCamera}
+                  className="px-16 py-6 bg-white text-black font-bold uppercase tracking-[0.2em] text-sm hover:bg-medium-gray transition-colors"
+                >
+                  Start Camera
+                </button>
+                <button onClick={() => setState('START')} className="text-medium-gray text-xs uppercase tracking-widest hover:text-white transition-colors">
+                  Back
+                </button>
+              </div>
+
+              {error && (
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="bg-red-500/10 border border-red-500/20 text-red-500 px-6 py-4 rounded-lg text-sm"
+                >
+                  {error}
+                </motion.div>
+              )}
+            </motion.div>
+          )}
+
+          {/* STATE 3: CAMERA MODE */}
+          {state === 'CAMERA' && (
+            <motion.div 
+              key="camera-mode"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[60] bg-black flex flex-col items-center justify-center p-6"
+            >
+              <div className="relative w-full max-w-2xl aspect-[3/4] bg-white/5 rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
+                <video 
+                  ref={videoRef} 
+                  autoPlay 
+                  playsInline 
+                  muted
+                  className="w-full h-full object-cover mirror"
+                />
+                
+                {/* Countdown Overlay */}
+                <AnimatePresence>
+                  {countdown !== null && (
+                    <motion.div 
+                      initial={{ opacity: 0, scale: 2 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.5 }}
+                      className="absolute inset-0 flex flex-col items-center justify-center bg-black/20 backdrop-blur-[2px] z-20"
+                    >
+                      <span className="text-[12rem] font-heading font-bold">{countdown}</span>
+                      <span className="text-2xl uppercase tracking-[0.5em] font-light -mt-8">Get Ready</span>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Capture Button Overlay */}
+                <div className="absolute bottom-32 left-0 right-0 flex items-center justify-center pointer-events-none z-30">
+                  {!isCapturing && countdown === null && (
+                    <motion.button
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      onClick={handleCapture}
+                      className="pointer-events-auto w-20 h-20 rounded-full bg-white border-8 border-white/20 flex items-center justify-center shadow-2xl hover:scale-110 transition-transform active:scale-95 group"
+                    >
+                      <div className="w-12 h-12 rounded-full border-2 border-black/10 group-hover:bg-black/5 transition-colors" />
+                    </motion.button>
+                  )}
+                </div>
+
+                {/* Progress Indicator */}
+                <div className="absolute bottom-10 left-0 right-0 flex flex-col items-center gap-4">
+                  <div className="px-6 py-2 bg-black/50 backdrop-blur-md rounded-full border border-white/20 text-xs uppercase tracking-[0.2em]">
+                    Photo {currentCaptureIndex} of {getPhotoCount(layout)}
+                  </div>
+                  <div className="flex gap-2">
+                    {Array.from({ length: getPhotoCount(layout) }).map((_, i) => (
+                      <div 
+                        key={i} 
+                        className={cn(
+                          "w-2 h-2 rounded-full transition-all duration-300",
+                          photos[i] ? "bg-white scale-125" : "bg-white/20"
+                        )} 
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <button 
+                onClick={() => { stopCamera(); setState('START'); setCurrentCaptureIndex(1); setPhotos([]); }}
+                className="mt-12 text-white/50 hover:text-white uppercase tracking-widest text-xs transition-colors"
+              >
+                Cancel Session
+              </button>
+            </motion.div>
+          )}
+
+          {/* STATE 4: RESULT / EDIT MODE */}
+          {state === 'RESULT' && (
+            <motion.div 
+              key="result-mode"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start w-full"
+            >
+              {/* Photo Strip Preview */}
+              <div className="flex justify-center order-2 lg:order-1 sticky top-32">
+                <div 
+                  className="relative shadow-[0_40px_80px_-15px_rgba(0,0,0,0.6)] transition-colors duration-500 overflow-hidden"
+                  style={{ 
+                    backgroundColor: frameColor,
+                    width: layout === '2x2' ? '320px' : '220px',
+                    height: 'auto',
+                    aspectRatio: layout === '2x2' ? '920/1446' : `480/${(533 * getPhotoCount(layout)) + (40 * (getPhotoCount(layout) + 1)) + 80 + 120}`
+                  }}
+                >
+                  <div className="relative z-10 w-full h-full flex flex-col" style={{ padding: '8.33%' }}>
+                    {/* Header Logo */}
+                    <div className="flex justify-center" style={{ marginBottom: '4.16%', height: '4.16%' }}>
+                      <img 
+                        src={isColorDark(frameColor) ? logoWhite : logoBlack} 
+                        alt="3NT STUDIO" 
+                        className="h-full w-auto object-contain"
+                      />
+                    </div>
+
+                    {/* Photos Layout */}
+                    <div 
+                      className={cn(
+                        "grid",
+                        layout === '2x2' ? 'grid-cols-2' : 'grid-cols-1'
+                      )}
+                      style={{ 
+                        gap: '8.33%',
+                        marginTop: '4.16%' 
+                      }}
+                    >
+                      {photos.map(photo => (
+                        <div key={photo.id} className="w-full aspect-[3/4] bg-black/10 overflow-hidden relative">
+                          <img 
+                            src={photo.url} 
+                            alt="" 
+                            className="w-full h-full object-cover" 
+                            style={{ filter: selectedFilter }}
+                          />
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Footer */}
+                    {showDate && (
+                      <div className={cn(
+                        "text-center uppercase tracking-[0.3em] opacity-50 absolute bottom-[4.16%] left-0 right-0",
+                        isColorDark(frameColor) ? 'text-white' : 'text-black'
+                      )} style={{ fontSize: '2.5%' }}>
+                        {new Date().toLocaleDateString()}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Editing Sidebar */}
+              <div className="space-y-12 order-1 lg:order-2">
+                <div className="space-y-2">
+                  <h2 className="text-4xl font-heading font-bold uppercase tracking-tighter">Customize</h2>
+                  <p className="text-medium-gray uppercase tracking-widest text-xs">Create your aesthetic Korea-style strip</p>
+                </div>
+
+                <div className="space-y-10">
+                  {/* Frame Color */}
+                  <div className="space-y-4">
+                    <label className="flex items-center gap-3 text-xs uppercase tracking-widest font-bold">
+                      <Palette size={16} /> Frame Color
+                    </label>
+                    <div className="flex flex-wrap gap-4 items-center">
+                      {FRAME_COLORS.map(color => (
+                        <button 
+                          key={color.value}
+                          onClick={() => setFrameColor(color.value)}
+                          className={cn(
+                            "w-10 h-10 rounded-full border-2 transition-all duration-300",
+                            frameColor === color.value ? "border-white scale-110" : "border-transparent"
+                          )}
+                          style={{ backgroundColor: color.value }}
+                          title={color.name}
+                        />
+                      ))}
+                      {/* Custom Color Picker */}
+                      <div className="relative group">
+                        <input 
+                          type="color"
+                          value={frameColor}
+                          onChange={(e) => setFrameColor(e.target.value)}
+                          className="w-10 h-10 rounded-full border-2 border-transparent bg-transparent cursor-pointer overflow-hidden"
+                          style={{ padding: 0, appearance: 'none' }}
+                        />
+                        <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-white text-black text-[8px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap font-bold uppercase">
+                          Custom Color
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Photo Filters */}
+                  <div className="space-y-4">
+                    <label className="flex items-center gap-3 text-xs uppercase tracking-widest font-bold">
+                      <Filter size={16} /> Photo Filter
+                    </label>
+                    <div className="grid grid-cols-3 gap-2">
+                      {FILTERS.map(filter => (
+                        <button 
+                          key={filter.name}
+                          onClick={() => setSelectedFilter(filter.value)}
+                          className={cn(
+                            "py-3 border transition-all duration-300 text-[10px] uppercase tracking-widest font-bold",
+                            selectedFilter === filter.value ? "bg-white text-black" : "border-white/20 text-white hover:border-white"
+                          )}
+                        >
+                          {filter.name}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Date Toggle */}
+                  <div className="space-y-4">
+                    <label className="flex items-center gap-3 text-xs uppercase tracking-widest font-bold">
+                      <Calendar size={16} /> Date Stamp
+                    </label>
+                    <button 
+                      onClick={() => setShowDate(!showDate)}
+                      className={cn(
+                        "px-6 py-3 border transition-all duration-300 text-[10px] uppercase tracking-widest font-bold",
+                        showDate ? "bg-white text-black" : "border-white/20 text-white hover:border-white"
+                      )}
+                    >
+                      {showDate ? 'Visible' : 'Hidden'}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-4 pt-8 border-t border-white/10">
+                  <button 
+                    onClick={downloadStrip}
+                    className="w-full py-5 bg-white text-black font-bold uppercase tracking-[0.2em] text-xs hover:bg-medium-gray transition-colors flex items-center justify-center gap-3"
+                  >
+                    <Download size={16} /> Download PNG Strip
+                  </button>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <button 
+                      onClick={shareToWhatsApp}
+                      className="py-4 border border-white/20 text-white font-bold uppercase tracking-[0.2em] text-[10px] hover:bg-green-500/10 hover:border-green-500/50 transition-all flex items-center justify-center gap-2"
+                    >
+                      <Share2 size={14} /> WhatsApp
+                    </button>
+                    <button 
+                      onClick={() => { setState('SETUP'); setPhotos([]); setCurrentCaptureIndex(1); }}
+                      className="py-4 border border-white/20 text-white font-bold uppercase tracking-[0.2em] text-[10px] hover:bg-white hover:text-black transition-all flex items-center justify-center gap-2"
+                    >
+                      <RefreshCw size={14} /> Retake
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <canvas ref={canvasRef} className="hidden" />
+      </div>
+    </section>
+  );
+};

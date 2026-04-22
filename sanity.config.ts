@@ -1,7 +1,7 @@
 import { defineConfig } from 'sanity'
 import { structureTool } from 'sanity/structure'
-import { schemaTypes } from './src/sanity/schemas'
-import { StudioLogo, StudioNavbar, StudioIcon } from './src/sanity/components/StudioBranding'
+import { schemaTypes } from './src/backend/sanity/schemas'
+import { StudioLogo, StudioNavbar, StudioIcon } from './src/backend/sanity/components/StudioBranding'
 import { Home, FileText, Layout, Users, Briefcase, Award, Calendar, Image } from 'lucide-react'
 
 export default defineConfig({
