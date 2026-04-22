@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 import { Navbar } from './frontend/components/layout/Navbar';
 import { Footer } from './frontend/components/layout/Footer';
 import Home from './frontend/pages/Home';
@@ -7,6 +8,8 @@ import Pricing from './frontend/pages/Pricing';
 import Location from './frontend/pages/Location';
 import Booking from './frontend/pages/Booking';
 import Photobooth from './frontend/pages/Photobooth';
+import Quotation from './frontend/pages/Pricing/sections/Quotation/Quotation';
+import Contact from './frontend/pages/Pricing/sections/Contact/Contact';
 import PhotoboothServicePage from './frontend/pages/Pricing/sections/services/Photobooth';
 import MulticamServicePage from './frontend/pages/Pricing/sections/services/Multicam';
 import DocumentationServicePage from './frontend/pages/Pricing/sections/services/Documentation';
@@ -15,6 +18,16 @@ import DroneServicePage from './frontend/pages/Pricing/sections/services/Drone';
 import TeleprompterServicePage from './frontend/pages/Pricing/sections/services/Teleprompter';
 import AdminDashboard from './backend/admin/pages/Admin/Dashboard';
 import './App.css';
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+}
 
 function AppContent() {
   const hostname = window.location.hostname;
@@ -45,6 +58,8 @@ function AppContent() {
               <Route path="/pricing" element={<Pricing />} />
               <Route path="/location" element={<Location />} />
               <Route path="/booking" element={<Booking />} />
+              <Route path="/quotation" element={<Quotation />} />
+              <Route path="/contact" element={<Contact />} />
               <Route path="/photobooth" element={<Photobooth />} />
               <Route path="/services/photobooth" element={<PhotoboothServicePage />} />
               <Route path="/services/multicam" element={<MulticamServicePage />} />
@@ -68,6 +83,7 @@ function AppContent() {
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <AppContent />
     </Router>
   );

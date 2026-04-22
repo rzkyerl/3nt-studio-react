@@ -23,53 +23,60 @@ const SectionWrapper = ({ children, className, id, dark = false }: any) => (
   </section>
 );
 
-const HeroSection = () => (
-  <SectionWrapper className="pt-40 lg:pt-48 min-h-[80vh] flex items-center">
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-      <motion.div 
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-        className="space-y-10"
-      >
-        <div className="space-y-4">
-          <h1 className="text-6xl md:text-8xl font-heading font-bold leading-[0.9] tracking-tighter">
-            3NT Studio <br />
-            <span className="italic font-light text-medium-gray">Production Services</span>
-          </h1>
-          <p className="text-xl md:text-2xl text-medium-gray font-light max-w-xl leading-relaxed">
-            Production for Wedding, Corporate, Concert & Live Streaming
+const HeroSection = () => {
+  const navigate = useNavigate();
+
+  return (
+    <SectionWrapper className="pt-40 lg:pt-48 min-h-[80vh] flex items-center">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="space-y-10"
+        >
+          <div className="space-y-4">
+            <h1 className="text-6xl md:text-8xl font-heading font-bold leading-[0.9] tracking-tighter">
+              3NT Studio <br />
+              <span className="italic font-light text-medium-gray">Production Services</span>
+            </h1>
+            <p className="text-xl md:text-2xl text-medium-gray font-light max-w-xl leading-relaxed">
+              Production for Wedding, Corporate, Concert & Live Streaming
+            </p>
+          </div>
+          
+          <p className="text-medium-gray text-lg max-w-lg">
+            Flexible production solutions for events of all sizes — from intimate weddings to large-scale productions.
           </p>
-        </div>
-        
-        <p className="text-medium-gray text-lg max-w-lg">
-          Flexible production solutions for events of all sizes — from intimate weddings to large-scale productions.
-        </p>
 
-        <div className="flex flex-wrap gap-6 pt-4">
-          <button className="bg-primary-black text-pure-white px-10 py-5 rounded-full font-bold uppercase tracking-widest text-sm hover:scale-105 transition-all shadow-xl">
-            Request Quotation
-          </button>
-          <button
-            onClick={() => document.getElementById('ecosystem')?.scrollIntoView({ behavior: 'smooth' })}
-            className="border border-primary-black text-primary-black px-10 py-5 rounded-full font-bold uppercase tracking-widest text-sm hover:bg-primary-black hover:text-pure-white transition-all"
-          >
-            View Services
-          </button>
-        </div>
-      </motion.div>
+          <div className="flex flex-wrap gap-6 pt-4">
+            <button
+              onClick={() => navigate('/quotation')}
+              className="bg-primary-black text-pure-white px-10 py-5 rounded-full font-bold uppercase tracking-widest text-sm hover:scale-105 transition-all shadow-xl"
+            >
+              Request Quotation
+            </button>
+            <button
+              onClick={() => document.getElementById('ecosystem')?.scrollIntoView({ behavior: 'smooth' })}
+              className="border border-primary-black text-primary-black px-10 py-5 rounded-full font-bold uppercase tracking-widest text-sm hover:bg-primary-black hover:text-pure-white transition-all"
+            >
+              View Services
+            </button>
+          </div>
+        </motion.div>
 
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 1 }}
-        className="relative aspect-[4/3] flex items-center justify-center"
-      >
-        <img src={logo3nt} className="w-full h-full object-contain" alt="Production" />
-      </motion.div>
-    </div>
-  </SectionWrapper>
-);
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1 }}
+          className="relative aspect-[4/3] flex items-center justify-center"
+        >
+          <img src={logo3nt} className="w-full h-full object-contain" alt="Production" />
+        </motion.div>
+      </div>
+    </SectionWrapper>
+  );
+};
 
 const TrustedSection = () => (
   <div className="border-y border-border-gray bg-light-gray/30 py-10 lg:py-12">
@@ -223,35 +230,42 @@ const FeatureList = ({ items, title }: any) => (
   </div>
 );
 
-const CustomProductionSection = () => (
-  <SectionWrapper dark id="custom">
-    <div className="max-w-4xl mx-auto text-center space-y-12">
-      <div className="space-y-4">
-        <h2 className="text-5xl md:text-7xl font-heading font-bold italic tracking-tighter">
-          Custom <span className="not-italic">Production</span>
-        </h2>
-        <p className="text-pure-white/60 text-xl font-light">By 3NT Studio</p>
+const CustomProductionSection = () => {
+  const consultationWhatsAppLink = "https://wa.me/628xxxx?text=Hi%203NT%20Studio%2C%0ASaya%20ingin%20konsultasi%20untuk%20event%20saya%0A%0AEvent%20Type%3A%0ATanggal%3A%0ALokasi%3A";
+
+  return (
+    <SectionWrapper dark id="custom">
+      <div className="max-w-4xl mx-auto text-center space-y-12">
+        <div className="space-y-4">
+          <h2 className="text-5xl md:text-7xl font-heading font-bold italic tracking-tighter">
+            Custom <span className="not-italic">Production</span>
+          </h2>
+          <p className="text-pure-white/60 text-xl font-light">By 3NT Studio</p>
+        </div>
+
+        <div className="flex flex-wrap justify-center gap-4">
+          {['Concert', 'Festival', 'Corporate', 'Government', 'Hybrid'].map(tag => (
+            <span key={tag} className="px-8 py-3 rounded-full border border-pure-white/20 text-sm font-bold uppercase tracking-widest hover:bg-pure-white hover:text-primary-black transition-all cursor-default">
+              {tag}
+            </span>
+          ))}
+        </div>
+
+        <p className="text-lg leading-relaxed text-pure-white/80">
+          For large scale events requiring specialized production crews, custom live visual assets, and 
+          advanced technical systems. We provide tailored solutions to match your specific event needs.
+        </p>
+
+        <button
+          onClick={() => window.open(consultationWhatsAppLink, '_blank', 'noopener,noreferrer')}
+          className="bg-pure-white text-primary-black px-12 py-6 rounded-full font-bold uppercase tracking-[0.2em] text-sm hover:scale-105 transition-all shadow-[0_0_30px_rgba(255,255,255,0.2)]"
+        >
+          Start Consultation
+        </button>
       </div>
-
-      <div className="flex flex-wrap justify-center gap-4">
-        {['Concert', 'Festival', 'Corporate', 'Government', 'Hybrid'].map(tag => (
-          <span key={tag} className="px-8 py-3 rounded-full border border-pure-white/20 text-sm font-bold uppercase tracking-widest hover:bg-pure-white hover:text-primary-black transition-all cursor-default">
-            {tag}
-          </span>
-        ))}
-      </div>
-
-      <p className="text-lg leading-relaxed text-pure-white/80">
-        For large scale events requiring specialized production crews, custom live visual assets, and 
-        advanced technical systems. We provide tailored solutions to match your specific event needs.
-      </p>
-
-      <button className="bg-pure-white text-primary-black px-12 py-6 rounded-full font-bold uppercase tracking-[0.2em] text-sm hover:scale-105 transition-all shadow-[0_0_30px_rgba(255,255,255,0.2)]">
-        Start Consultation
-      </button>
-    </div>
-  </SectionWrapper>
-);
+    </SectionWrapper>
+  );
+};
 
 const WhySection = () => {
   const reasons = [
@@ -282,22 +296,26 @@ const WhySection = () => {
   );
 };
 
-const CTASection = () => (
-  <SectionWrapper className="bg-light-gray">
-    <div className="text-center space-y-12 py-12">
-      <h2 className="text-5xl md:text-7xl font-heading font-bold tracking-tighter italic">Ready to Work with <br /><span className="not-italic">3NT Studio?</span></h2>
-      
-      <div className="flex flex-wrap justify-center gap-6">
-        <button className="bg-primary-black text-pure-white px-12 py-6 rounded-full font-bold uppercase tracking-widest text-sm hover:scale-105 transition-all shadow-xl flex items-center gap-3">
-          Contact WhatsApp
-        </button>
-        <button className="border border-primary-black text-primary-black px-12 py-6 rounded-full font-bold uppercase tracking-widest text-sm hover:bg-primary-black hover:text-pure-white transition-all">
-          Send Inquiry
-        </button>
+const CTASection = () => {
+  const navigate = useNavigate();
+
+  return (
+    <SectionWrapper className="bg-light-gray">
+      <div className="text-center space-y-12 py-12">
+        <h2 className="text-5xl md:text-7xl font-heading font-bold tracking-tighter italic">Ready to Work with <br /><span className="not-italic">3NT Studio?</span></h2>
+        
+        <div className="flex flex-wrap justify-center gap-6">
+          <button
+            onClick={() => navigate('/contact')}
+            className="border border-primary-black text-primary-black px-12 py-6 rounded-full font-bold uppercase tracking-widest text-sm hover:bg-primary-black hover:text-pure-white transition-all"
+          >
+            Send Inquiry
+          </button>
+        </div>
       </div>
-    </div>
-  </SectionWrapper>
-);
+    </SectionWrapper>
+  );
+};
 
 // --- Main Page Component ---
 
