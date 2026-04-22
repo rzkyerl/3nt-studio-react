@@ -75,7 +75,7 @@ export const Testimonials = () => {
                 </div>
                 
                 <div className="flex items-center gap-6 pt-6 border-t border-border-gray">
-                  <div className="w-16 h-16 rounded-full overflow-hidden grayscale border-2 border-white shadow-md">
+                  <div className="w-16 h-16 rounded-full overflow-hidden lg:grayscale border-2 border-white shadow-md">
                     <img 
                       src={testimonial.imageUrl} 
                       alt={testimonial.name} 

@@ -5,13 +5,13 @@ import { useNavigate } from 'react-router-dom';
 import { cn } from '../../../lib/utils';
 
 // Assets
-import sonyKit from '../../../assets/Photo/Pricing/sony-kit-camera.jpg';
+import fifa3 from '../../../assets/Photo/fifa/3.png';
 import logo3nt from '../../../assets/Photo/logo-black-1.png';
-import mld1 from '../../../assets/Photo/mldspot/1.png';
-import bph1 from '../../../assets/Photo/bph-migas/1.png';
-import asdp1 from '../../../assets/Photo/asdp/1.png';
-import golf1 from '../../../assets/Photo/golf-freindly-tournament/1.png';
-import frame1 from '../../../assets/Photo/asdp/2.png';
+import streaming from '../../../assets/Photo/services-assets/streaming-equipement.jpg';
+import teleprompter from '../../../assets/Photo/services-assets/teleprompter.jpg';
+import eventProduction from '../../../assets/Photo/mldspot/6.png';
+import drone from '../../../assets/Photo/services-assets/drone.jpg';
+import photobooth from '../../../assets/Photo/services-assets/photobooth.jpg';
 
 // --- Sub-Components ---
 
@@ -36,10 +36,13 @@ const HeroSection = () => {
           className="space-y-10"
         >
           <div className="space-y-4">
-            <h1 className="text-6xl md:text-8xl font-heading font-bold leading-[0.9] tracking-tighter">
-              3NT Studio <br />
-              <span className="italic font-light text-medium-gray">Production Services</span>
-            </h1>
+            <div className="flex items-start justify-between gap-4">
+              <h1 className="text-6xl md:text-8xl font-heading font-bold leading-[0.9] tracking-tighter">
+                3NT Studio <br />
+                <span className="italic font-light text-medium-gray">Production Services</span>
+              </h1>
+              <img src={logo3nt} className="w-24 h-24 object-contain shrink-0 lg:hidden mt-1" alt="3NT Studio Logo" />
+            </div>
             <p className="text-xl md:text-2xl text-medium-gray font-light max-w-xl leading-relaxed">
               Production for Wedding, Corporate, Concert & Live Streaming
             </p>
@@ -69,7 +72,7 @@ const HeroSection = () => {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1 }}
-          className="relative aspect-[4/3] flex items-center justify-center"
+        className="relative aspect-[4/3] hidden lg:flex items-center justify-center"
         >
           <img src={logo3nt} className="w-full h-full object-contain" alt="Production" />
         </motion.div>
@@ -99,12 +102,12 @@ const TrustedSection = () => (
 const EcosystemSection = () => {
   const navigate = useNavigate();
   const categories = [
-    { title: "Event Production", desc: "End-to-end production solutions for your biggest moments.", img: asdp1, href: '/services/multicam' },
-    { title: "Photobooth Experience", desc: "High-end photo booth systems for engaging events.", img: frame1, href: '/services/photobooth' },
-    { title: "Documentation", desc: "Professional photography and videography documentation.", img: sonyKit, href: '/services/documentation' },
-    { title: "Streaming & Broadcast", desc: "High-quality live streaming for any platform.", img: mld1, href: '/services/streaming' },
-    { title: "Aerial Production", desc: "Cinematic drone shots for perspective and coverage.", img: golf1, href: '/services/drone' },
-    { title: "Additional Tools", desc: "Specialized equipment and production support.", img: bph1, href: '/services/teleprompter' },
+    { title: "Event Production", desc: "End-to-end production solutions for your biggest moments.", img: eventProduction, href: '/services/multicam' },
+    { title: "Photobooth Experience", desc: "High-end photo booth systems for engaging events.", img: photobooth, href: '/services/photobooth' },
+    { title: "Documentation", desc: "Professional photography and videography documentation.", img: fifa3, href: '/services/documentation' },
+    { title: "Streaming & Broadcast", desc: "High-quality live streaming for any platform.", img: streaming, href: '/services/streaming' },
+    { title: "Aerial Production", desc: "Cinematic drone shots for perspective and coverage.", img: drone, href: '/services/drone' },
+    { title: "Additional Tools", desc: "Specialized equipment and production support.", img: teleprompter, href: '/services/teleprompter' },
   ];
 
   return (
@@ -133,7 +136,7 @@ const EcosystemSection = () => {
               el?.scrollIntoView({ behavior: 'smooth' });
             }}
           >
-            <div className="aspect-[4/3] overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-700">
+            <div className="aspect-[4/3] overflow-hidden lg:grayscale group-hover:grayscale-0 transition-all duration-700">
               <img src={cat.img} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={cat.title} />
             </div>
             <div className="p-8 space-y-4">

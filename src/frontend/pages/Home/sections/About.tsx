@@ -137,7 +137,7 @@ export const About = ({ data }: { data: any }) => {
                 transition={{ duration: 0.5, delay: index * 0.2 }}
                 className="flex flex-col items-center text-center space-y-6 group"
               >
-                <div className="relative w-full aspect-[3/4] overflow-hidden grayscale hover:grayscale-0 transition-all duration-700 shadow-xl">
+                <div className="relative w-full aspect-[3/4] overflow-hidden lg:grayscale hover:grayscale-0 transition-all duration-700 shadow-xl">
                   <img 
                     src={member.imageUrl} 
                     alt={member.name} 

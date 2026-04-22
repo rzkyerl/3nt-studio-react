@@ -11,7 +11,7 @@ import Photobooth from './frontend/pages/Photobooth';
 import Quotation from './frontend/pages/Pricing/sections/Quotation/Quotation';
 import Contact from './frontend/pages/Pricing/sections/Contact/Contact';
 import PhotoboothServicePage from './frontend/pages/Pricing/sections/services/Photobooth';
-import MulticamServicePage from './frontend/pages/Pricing/sections/services/Multicam';
+import MulticamServicePage from './frontend/pages/Pricing/sections/services/EventProduction';
 import DocumentationServicePage from './frontend/pages/Pricing/sections/services/Documentation';
 import BroadcastServicePage from './frontend/pages/Pricing/sections/services/Broadcast';
 import DroneServicePage from './frontend/pages/Pricing/sections/services/Drone';

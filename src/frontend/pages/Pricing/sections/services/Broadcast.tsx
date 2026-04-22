@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import broadcastImage from '../../../../assets/Photo/Production/multicam-production.png';
+import broadcastImage from '../../../../assets/Photo/services-assets/streaming-equipement.jpg';
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 24 },

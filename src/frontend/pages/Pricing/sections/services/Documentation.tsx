@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import documentationImage from '../../../../assets/Photo/Pricing/sony-kit-camera.jpg';
+import documentationImage from '../../../../assets/Photo/fifa/3.png';
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 24 },
