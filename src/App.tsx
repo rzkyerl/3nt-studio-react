@@ -31,7 +31,7 @@ function ScrollToTop() {
 
 function AppContent() {
   const hostname = window.location.hostname;
-  const isAdminDomain = hostname === '3nt-studio-admin.vercel.app';
+  const isAdminDomain = hostname === '3nt-studio-project.vercel.app';
   const location = useLocation();
   const hideFooterOnServiceDetail = location.pathname.startsWith('/services/');
 
