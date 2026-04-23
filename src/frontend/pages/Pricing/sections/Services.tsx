@@ -227,7 +227,7 @@ const FeatureList = ({ items, title }: any) => (
         <div key={i} className="flex items-center gap-3 text-sm font-bold uppercase tracking-tight">
           <Check size={16} className="text-medium-gray" />
           <span>{item}</span>
-        </div>
+        </div>  
       ))}
     </div>
   </div>
@@ -319,8 +319,6 @@ const CTASection = () => {
     </SectionWrapper>
   );
 };
-
-// --- Main Page Component ---
 
 export const Pricing = () => {
   return (

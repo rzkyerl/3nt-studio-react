@@ -39,8 +39,26 @@ export default defineConfig({
             S.divider(), // Garis pembatas
 
             // MENU LAINNYA
-            S.documentTypeListItem('portfolio').title('Portfolio').icon(Image),
-            S.documentTypeListItem('pricing').title('Pricing').icon(FileText),
+            S.listItem()
+              .title('Portfolio Page')
+              .icon(Image)
+              .child(
+                S.list()
+                  .title('Portfolio Page Management')
+                  .items([
+                    S.documentTypeListItem('portfolio').title('Portfolio').icon(Image),
+                  ])
+              ),
+            S.listItem()
+              .title('Pricing Page')
+              .icon(FileText)
+              .child(
+                S.list()
+                  .title('Pricing Page Management')
+                  .items([
+                    S.documentTypeListItem('pricing').title('Pricing').icon(FileText),
+                  ])
+              ),
             S.documentTypeListItem('booking').title('Booking Reservations').icon(Calendar),
           ]),
     }),

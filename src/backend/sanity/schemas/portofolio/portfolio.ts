@@ -1,3 +1,5 @@
+import PortfolioMediaArrayInput from '../../components/PortfolioMediaArrayInput'
+
 export default {
   name: 'portfolio',
   title: 'Portfolio',
@@ -13,6 +15,9 @@ export default {
       name: 'mediaItems',
       title: 'Upload Images or Videos',
       type: 'array',
+      components: {
+        input: PortfolioMediaArrayInput
+      },
       of: [
         {
           type: 'file',
@@ -23,7 +28,7 @@ export default {
               mimeType: 'asset.mimeType'
             },
             prepare({ fileName, mimeType }: any) {
-              const isVideo = typeof mimeType === 'string' && mimeType.startsWith('video/');
+              const isVideo = typeof mimeType === 'string' && mimeType.startsWith('video/')
               return {
                 title: fileName || (isVideo ? 'Video file' : 'Image file'),
                 subtitle: isVideo ? 'Video' : 'Image'

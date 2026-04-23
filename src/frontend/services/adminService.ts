@@ -15,7 +15,22 @@ export const fetchCollection = async (type: string, sortField: string = '_create
   const sanityType = typeMap[type] || type;
   const order = sortField === 'createdAt' ? '_createdAt' : sortField;
   
-  const query = `*[_type == "${sanityType}"] | order(${order} desc)`;
+  const query = `*[_type == "${sanityType}"] | order(${order} desc) {
+    ...,
+    "videoUrl": video.asset->url,
+    "fileUrl": file.asset->url,
+    "mediaItems": mediaItems[]{
+      ...,
+      "url": asset->url,
+      "mimeType": asset->mimeType,
+      "imageUrl": image.asset->url,
+      "videoUrl": video.asset->url
+    },
+    "productionEcosystemCards": productionEcosystemCards[]{
+      ...,
+      "imageUrl": image.asset->url
+    }
+  }`;
   const data = await client.fetch(query);
   
   // Transform Sanity image references to URLs

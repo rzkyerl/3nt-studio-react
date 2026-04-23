@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { cn } from '../../../lib/utils';
 import { useState, useEffect } from 'react';
 import * as adminService from '../../../services/adminService';
+import { urlFor } from '../../../../backend/sanity/client';
 
 // Import New Portfolio Photos (Keep as static fallback if needed)
 import mld1 from '../../../assets/Photo/mldspot/1.png';
@@ -48,6 +49,7 @@ interface PortfolioItem {
   image?: string;
   url?: string; // from firebase
   video?: string;
+  type?: 'image' | 'video';
   className: string;
 }
 
@@ -55,6 +57,15 @@ interface ProjectGroup {
   title: string;
   items: PortfolioItem[];
 }
+
+const getSanityImageUrl = (imageField: any) => {
+  if (!imageField?.asset) return undefined;
+  try {
+    return urlFor(imageField).url();
+  } catch {
+    return undefined;
+  }
+};
 
 const staticPortfolioGroups: ProjectGroup[] = [
   {
@@ -117,6 +128,8 @@ const staticPortfolioGroups: ProjectGroup[] = [
 export const Portfolio = () => {
   const [dynamicGroups, setDynamicGroups] = useState<ProjectGroup[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const groupsPerPage = 5;
 
   useEffect(() => {
     const fetchPortfolio = async () => {
@@ -128,26 +141,53 @@ export const Portfolio = () => {
           return;
         }
 
-        const imagesByGroup: { [key: string]: PortfolioItem[] } = {};
-        
-        data.forEach((item: any) => {
-          const category = item.category || 'Other';
-          
-          if (!imagesByGroup[category]) {
-            imagesByGroup[category] = [];
-          }
-          
-          imagesByGroup[category].push({
-            id: item.id,
-            url: item.url,
-            className: "md:col-span-1 md:row-span-1" 
-          } as PortfolioItem);
-        });
+        const groups = data
+          .map((item: any) => {
+            const normalizedTitle =
+              typeof item.title === 'string'
+                ? item.title
+                : item.title?.[0]?.children?.[0]?.text || item.category || 'Untitled Portfolio';
 
-        const groups = Object.keys(imagesByGroup).map(title => ({
-          title,
-          items: imagesByGroup[title]
-        }));
+            const mediaItems: PortfolioItem[] = Array.isArray(item.mediaItems)
+              ? item.mediaItems
+                  .map((media: any, index: number) => {
+                    const mimeType = typeof media?.mimeType === 'string' ? media.mimeType : '';
+                    const isVideoByMime = mimeType.startsWith('video/');
+                    const isVideoByLegacy =
+                      media?.mediaType === 'video' || Boolean(media?.videoUrl || media?.video?.asset?.url);
+                    const mediaType = isVideoByMime || isVideoByLegacy ? 'video' : 'image';
+                    const mediaUrl =
+                      media?.url || media?.imageUrl || media?.image?.asset?.url || getSanityImageUrl(media?.image);
+                    const videoUrl = media?.url || media?.videoUrl || media?.video?.asset?.url;
+                    return {
+                      id: `${item.id}-${index}`,
+                      url: mediaType === 'image' ? mediaUrl : undefined,
+                      video: mediaType === 'video' ? videoUrl : undefined,
+                      type: mediaType,
+                      className: "md:col-span-1 md:row-span-1"
+                    } as PortfolioItem;
+                  })
+                  .filter((media: PortfolioItem) => media.url || media.video)
+              : [];
+
+            const fallbackItems: PortfolioItem[] = mediaItems.length
+              ? mediaItems
+              : [
+                  {
+                    id: `${item.id}-legacy`,
+                    url: item.url || item.imageUrl,
+                    video: item.videoUrl || item.video?.asset?.url || item.video,
+                    type: item.videoUrl || item.video ? ('video' as const) : ('image' as const),
+                    className: "md:col-span-1 md:row-span-1"
+                  }
+                ].filter((media) => media.url || media.video);
+
+            return {
+              title: normalizedTitle,
+              items: fallbackItems
+            };
+          })
+          .filter((group: ProjectGroup) => group.items.length > 0);
 
         setDynamicGroups(groups);
       } catch (error) {
@@ -161,6 +201,15 @@ export const Portfolio = () => {
   }, []);
 
   const displayGroups = dynamicGroups.length > 0 ? dynamicGroups : staticPortfolioGroups;
+  const totalPages = Math.max(1, Math.ceil(displayGroups.length / groupsPerPage));
+  const paginatedGroups = displayGroups.slice(
+    (currentPage - 1) * groupsPerPage,
+    currentPage * groupsPerPage
+  );
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [displayGroups.length]);
 
   if (loading) {
     return (
@@ -200,15 +249,17 @@ export const Portfolio = () => {
         </div>
 
         <div className="space-y-40">
-          {displayGroups.map((group, groupIndex) => (
-            <div key={group.title} className="space-y-12">
+          {paginatedGroups.map((group, groupIndex) => (
+            <div key={`${group.title}-${groupIndex}`} className="space-y-12">
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 className="flex items-center gap-6"
               >
-                <span className="text-xs font-bold tracking-[0.5em] text-medium-gray">0{groupIndex + 1}</span>
+                <span className="text-xs font-bold tracking-[0.5em] text-medium-gray">
+                  {String((currentPage - 1) * groupsPerPage + groupIndex + 1).padStart(2, '0')}
+                </span>
                 <h3 className="text-3xl md:text-5xl font-heading font-bold uppercase tracking-tighter">{group.title}</h3>
                 <div className="h-[1px] flex-grow bg-border-gray/50" />
               </motion.div>
@@ -226,17 +277,64 @@ export const Portfolio = () => {
                       item.className
                     )}
                   >
-                    <img
-                      src={item.url || item.image}
-                      alt={`${group.title} ${index + 1}`}
-                      className="w-full h-full object-cover lg:grayscale group-hover:grayscale-0 transition-all duration-700 ease-out scale-100 group-hover:scale-110"
-                    />
+                    {item.type === 'video' && item.video ? (
+                      <video
+                        src={item.video}
+                        className="w-full h-full object-cover lg:grayscale group-hover:grayscale-0 transition-all duration-700 ease-out scale-100 group-hover:scale-110"
+                        muted
+                        loop
+                        playsInline
+                        autoPlay
+                      />
+                    ) : (
+                      <img
+                        src={item.url || item.image}
+                        alt={`${group.title} ${index + 1}`}
+                        className="w-full h-full object-cover lg:grayscale group-hover:grayscale-0 transition-all duration-700 ease-out scale-100 group-hover:scale-110"
+                      />
+                    )}
                     <div className="absolute inset-0 bg-primary-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   </motion.div>
                 ))}
               </div>
             </div>
           ))}
+
+          {totalPages > 1 && (
+            <div className="flex flex-wrap items-center justify-center gap-3 pt-6">
+              <button
+                type="button"
+                onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                disabled={currentPage === 1}
+                className="px-5 py-2 border border-border-gray text-xs uppercase tracking-[0.2em] font-bold disabled:opacity-40 disabled:cursor-not-allowed hover:bg-primary-black hover:text-pure-white transition-colors"
+              >
+                Prev
+              </button>
+              {Array.from({ length: totalPages }, (_, idx) => idx + 1).map((page) => (
+                <button
+                  key={page}
+                  type="button"
+                  onClick={() => setCurrentPage(page)}
+                  className={cn(
+                    "w-10 h-10 text-xs font-bold border transition-colors",
+                    page === currentPage
+                      ? "bg-primary-black text-pure-white border-primary-black"
+                      : "border-border-gray hover:bg-primary-black hover:text-pure-white"
+                  )}
+                >
+                  {page}
+                </button>
+              ))}
+              <button
+                type="button"
+                onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+                disabled={currentPage === totalPages}
+                className="px-5 py-2 border border-border-gray text-xs uppercase tracking-[0.2em] font-bold disabled:opacity-40 disabled:cursor-not-allowed hover:bg-primary-black hover:text-pure-white transition-colors"
+              >
+                Next
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </section>
