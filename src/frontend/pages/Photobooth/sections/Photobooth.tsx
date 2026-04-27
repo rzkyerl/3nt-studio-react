@@ -2,8 +2,8 @@ import { useState, useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Download, RefreshCw, Palette, Calendar, Share2, Filter } from 'lucide-react';
 import { cn } from '../../../lib/utils';
-import logoBlack from '../../../assets/Photo/logo-black.png';
-import logoWhite from '../../../assets/Photo/logo-white.png';
+import logoBlack from '../../../assets/Photo/logo-black.webp';
+import logoWhite from '../../../assets/Photo/logo-white.webp';
 
 
 type State = 'START' | 'SETUP' | 'CAMERA' | 'RESULT';
@@ -299,7 +299,7 @@ export const Photobooth = () => {
       // Convert dataUrl to Blob
       const response = await fetch(dataUrl);
       const blob = await response.blob();
-      const file = new File([blob], 'photobooth-strip.png', { type: 'image/png' });
+      const file = new File([blob], 'photobooth-strip.webp', { type: 'image/png' });
 
       if (navigator.share && navigator.canShare({ files: [file] })) {
         await navigator.share({

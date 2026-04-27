@@ -3,21 +3,21 @@ import { useState, useEffect } from 'react';
 import * as adminService from '../../../services/adminService';
 
 // Import local logos
-import logoKemenhub from '../../../assets/Photo/logo-client/logo-kementrian-perhubungan-ri.png';
-import logoBappenas from '../../../assets/Photo/logo-client/logo-kementerian-ppn-bappenas.png';
+import logoKemenhub from '../../../assets/Photo/logo-client/logo-kementrian-perhubungan-ri.webp';
+import logoBappenas from '../../../assets/Photo/logo-client/logo-kementerian-ppn-bappenas.webp';
 import logoKemendikbud from '../../../assets/Photo/logo-client/logo-kementerian-pendidikan.svg';
-import logoPLN from '../../../assets/Photo/logo-client/logo-pln.png';
-import logoASDP from '../../../assets/Photo/logo-client/logo-asdp.png';
+import logoPLN from '../../../assets/Photo/logo-client/logo-pln.webp';
+import logoASDP from '../../../assets/Photo/logo-client/logo-asdp.webp';
 import logoTugu from '../../../assets/Photo/logo-client/logo-tugu.svg';
-import logoPegadaian from '../../../assets/Photo/logo-client/logo-pegadaian.png';
-import logoMitratel from '../../../assets/Photo/logo-client/logo-mitratel.png';
+import logoPegadaian from '../../../assets/Photo/logo-client/logo-pegadaian.webp';
+import logoMitratel from '../../../assets/Photo/logo-client/logo-mitratel.webp';
 import logoFIFA from '../../../assets/Photo/logo-client/logo-fifa.svg';
-import logoProst from '../../../assets/Photo/logo-client/logo-proostbeer.png';
+import logoProst from '../../../assets/Photo/logo-client/logo-proostbeer.webp';
 import logoJasaMarga from '../../../assets/Photo/logo-client/logo-jasamarga.svg';
-import logoBNPB from '../../../assets/Photo/logo-client/logo-bnpb.png';
-import logoPSSI from '../../../assets/Photo/logo-client/logo-pssi.png';
+import logoBNPB from '../../../assets/Photo/logo-client/logo-bnpb.webp';
+import logoPSSI from '../../../assets/Photo/logo-client/logo-pssi.webp';
 import logoMLDSpot from '../../../assets/Photo/logo-client/logo-mldspot.svg';
-import logoSingaraja from '../../../assets/Photo/logo-client/logo-singaraja.png';
+import logoSingaraja from '../../../assets/Photo/logo-client/logo-singaraja.webp';
 
 const defaultClients = [
   { name: "Kementerian Perhubungan", logoUrl: logoKemenhub },

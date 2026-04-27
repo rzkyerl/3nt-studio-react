@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import droneImage from '../../../../assets/Photo/services-assets/drone.jpg';
+import droneImage from '../../../../assets/Photo/services-assets/drone.webp';
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 24 },

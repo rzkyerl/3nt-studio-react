@@ -5,13 +5,13 @@ import { useNavigate } from 'react-router-dom';
 import { cn } from '../../../lib/utils';
 
 // Assets
-import fifa3 from '../../../assets/Photo/fifa/3.png';
-import logo3nt from '../../../assets/Photo/logo-black-1.png';
-import streaming from '../../../assets/Photo/services-assets/streaming-equipement.jpg';
-import teleprompter from '../../../assets/Photo/services-assets/teleprompter.jpg';
-import eventProduction from '../../../assets/Photo/mldspot/6.png';
-import drone from '../../../assets/Photo/services-assets/drone.jpg';
-import photobooth from '../../../assets/Photo/services-assets/photobooth.jpg';
+import fifa3 from '../../../assets/Photo/fifa/3.webp';
+import logo3nt from '../../../assets/Photo/logo-black-1.webp';
+import streaming from '../../../assets/Photo/services-assets/streaming-equipement.webp';
+import teleprompter from '../../../assets/Photo/services-assets/teleprompter.webp';
+import eventProduction from '../../../assets/Photo/mldspot/6.webp';
+import drone from '../../../assets/Photo/services-assets/drone.webp';
+import photobooth from '../../../assets/Photo/services-assets/photobooth.webp';
 
 // --- Sub-Components ---
 

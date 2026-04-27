@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import photoboothImage from '../../../../assets/Photo/services-assets/photobooth.jpg';
+import photoboothImage from '../../../../assets/Photo/services-assets/photobooth.webp';
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 24 },

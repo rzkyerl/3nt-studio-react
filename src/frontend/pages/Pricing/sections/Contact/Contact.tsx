@@ -12,22 +12,22 @@ const Contact = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <a
-            href="mailto:hello@3nt.studio"
+            href="mailto:3nteamprod@gmail.com"
             className="border border-border-gray rounded-2xl p-8 space-y-3 hover:border-primary-black transition-colors"
           >
             <p className="text-xs uppercase tracking-[0.2em] text-medium-gray font-bold">Email Form</p>
-            <p className="text-2xl font-bold">hello@3nt.studio</p>
+            <p className="text-2xl font-bold">3nteamprod@gmail.com</p>
             <p className="text-medium-gray">Send your inquiry detail by email.</p>
           </a>
 
           <a
-            href="https://wa.me/628xxxx"
+            href="https://wa.me/6285697229466"
             target="_blank"
             rel="noopener noreferrer"
             className="border border-border-gray rounded-2xl p-8 space-y-3 hover:border-primary-black transition-colors"
           >
             <p className="text-xs uppercase tracking-[0.2em] text-medium-gray font-bold">WhatsApp</p>
-            <p className="text-2xl font-bold">+62 8xxx xxxx xxxx</p>
+            <p className="text-2xl font-bold">+62 856-9722-9466</p>
             <p className="text-medium-gray">Quick discussion for availability and pricing.</p>
           </a>
 
@@ -38,13 +38,13 @@ const Contact = () => {
             className="border border-border-gray rounded-2xl p-8 space-y-3 hover:border-primary-black transition-colors"
           >
             <p className="text-xs uppercase tracking-[0.2em] text-medium-gray font-bold">Instagram</p>
-            <p className="text-2xl font-bold">@3ntstudio</p>
+            <p className="text-2xl font-bold">@3nt_studio</p>
             <p className="text-medium-gray">See latest projects and send DM.</p>
           </a>
 
           <div className="border border-border-gray rounded-2xl p-8 space-y-3">
             <p className="text-xs uppercase tracking-[0.2em] text-medium-gray font-bold">Location</p>
-            <p className="text-2xl font-bold">Indonesia</p>
+            <p className="text-2xl font-bold">Kota Tangerang, Banten</p>
             <p className="text-medium-gray">Available for projects nationwide.</p>
           </div>
         </div>

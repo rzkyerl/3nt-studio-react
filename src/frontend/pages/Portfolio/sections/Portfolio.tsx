@@ -5,44 +5,44 @@ import * as adminService from '../../../services/adminService';
 import { urlFor } from '../../../../backend/sanity/client';
 
 // Import New Portfolio Photos (Keep as static fallback if needed)
-import mld1 from '../../../assets/Photo/mldspot/1.png';
-import mld2 from '../../../assets/Photo/mldspot/2.png';
-import mld3 from '../../../assets/Photo/mldspot/3.png';
-import mld4 from '../../../assets/Photo/mldspot/4.png';
-import mld5 from '../../../assets/Photo/mldspot/5.png';
-import mld6 from '../../../assets/Photo/mldspot/6.png';
+import mld1 from '../../../assets/Photo/mldspot/1.webp';
+import mld2 from '../../../assets/Photo/mldspot/2.webp';
+import mld3 from '../../../assets/Photo/mldspot/3.webp';
+import mld4 from '../../../assets/Photo/mldspot/4.webp';
+import mld5 from '../../../assets/Photo/mldspot/5.webp';
+import mld6 from '../../../assets/Photo/mldspot/6.webp';
 
 // BPH MIGAS
-import bph1 from '../../../assets/Photo/bph-migas/1.png';
-import bph2 from '../../../assets/Photo/bph-migas/2.png';
-import bph3 from '../../../assets/Photo/bph-migas/3.png';
-import bph4 from '../../../assets/Photo/bph-migas/4.png';
-import bph5 from '../../../assets/Photo/bph-migas/5.png';
-import bph6 from '../../../assets/Photo/bph-migas/6.png';
+import bph1 from '../../../assets/Photo/bph-migas/1.webp';
+import bph2 from '../../../assets/Photo/bph-migas/2.webp';
+import bph3 from '../../../assets/Photo/bph-migas/3.webp';
+import bph4 from '../../../assets/Photo/bph-migas/4.webp';
+import bph5 from '../../../assets/Photo/bph-migas/5.webp';
+import bph6 from '../../../assets/Photo/bph-migas/6.webp';
 
 // FIFA
-import fifa1 from '../../../assets/Photo/fifa/1.png';
-import fifa2 from '../../../assets/Photo/fifa/2.png';
-import fifa3 from '../../../assets/Photo/fifa/3.png';
-import fifa4 from '../../../assets/Photo/fifa/4.png';
-import fifa5 from '../../../assets/Photo/fifa/5.png';
-import fifa6 from '../../../assets/Photo/fifa/6.png';
+import fifa1 from '../../../assets/Photo/fifa/1.webp';
+import fifa2 from '../../../assets/Photo/fifa/2.webp';
+import fifa3 from '../../../assets/Photo/fifa/3.webp';
+import fifa4 from '../../../assets/Photo/fifa/4.webp';
+import fifa5 from '../../../assets/Photo/fifa/5.webp';
+import fifa6 from '../../../assets/Photo/fifa/6.webp';
 
 // GOLF
-import golf1 from '../../../assets/Photo/golf-freindly-tournament/1.png';
-import golf2 from '../../../assets/Photo/golf-freindly-tournament/2.png';
-import golf3 from '../../../assets/Photo/golf-freindly-tournament/3.png';
-import golf4 from '../../../assets/Photo/golf-freindly-tournament/4.png';
-import golf5 from '../../../assets/Photo/golf-freindly-tournament/5.png';
-import golf6 from '../../../assets/Photo/golf-freindly-tournament/6.png';
+import golf1 from '../../../assets/Photo/golf-freindly-tournament/1.webp';
+import golf2 from '../../../assets/Photo/golf-freindly-tournament/2.webp';
+import golf3 from '../../../assets/Photo/golf-freindly-tournament/3.webp';
+import golf4 from '../../../assets/Photo/golf-freindly-tournament/4.webp';
+import golf5 from '../../../assets/Photo/golf-freindly-tournament/5.webp';
+import golf6 from '../../../assets/Photo/golf-freindly-tournament/6.webp';
 
 // ASDP
-import asdp1 from '../../../assets/Photo/asdp/1.png';
-import asdp2 from '../../../assets/Photo/asdp/2.png';
-import asdp3 from '../../../assets/Photo/asdp/3.png';
-import asdp4 from '../../../assets/Photo/asdp/4.png';
-import asdp5 from '../../../assets/Photo/asdp/5.png';
-import asdp6 from '../../../assets/Photo/asdp/6.png';
+import asdp1 from '../../../assets/Photo/asdp/1.webp';
+import asdp2 from '../../../assets/Photo/asdp/2.webp';
+import asdp3 from '../../../assets/Photo/asdp/3.webp';
+import asdp4 from '../../../assets/Photo/asdp/4.webp';
+import asdp5 from '../../../assets/Photo/asdp/5.webp';
+import asdp6 from '../../../assets/Photo/asdp/6.webp';
 
 interface PortfolioItem {
   id: string | number;

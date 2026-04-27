@@ -1,6 +1,6 @@
-import { Instagram, Facebook, Twitter, Mail, MapPin, Phone } from 'lucide-react';
+import { Instagram, Mail, MapPin, Phone } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
-import logoWhite from '../../assets/Photo/logo-white.png';
+import logoWhite from '../../assets/Photo/logo-white.webp';
 
 export const Footer = () => {
   const location = useLocation();
@@ -24,14 +24,8 @@ export const Footer = () => {
             Capturing the essence of every moment through a minimalist lens. Based in the heart of the city, we provide premium photography services for weddings, portraits, and commercial projects.
           </p>
           <div className="flex gap-6">
-            <a href="#" className="text-pure-white hover:text-medium-gray transition-colors">
+            <a href="https://instagram.com/3nt_studio" className="text-pure-white hover:text-medium-gray transition-colors">
               <Instagram size={20} />
-            </a>
-            <a href="#" className="text-pure-white hover:text-medium-gray transition-colors">
-              <Facebook size={20} />
-            </a>
-            <a href="#" className="text-pure-white hover:text-medium-gray transition-colors">
-              <Twitter size={20} />
             </a>
           </div>
         </div>
@@ -74,12 +68,9 @@ export const Footer = () => {
 
       {/* Copyright */}
       <div className="container-custom mt-20 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs uppercase tracking-[0.2em] text-medium-gray">
-        <p>&copy; 2026 3NT STUDIO. ALL RIGHTS RESERVED.</p>
-        <div className="flex gap-8">
-          <a href="#" className="hover:text-pure-white transition-colors">Privacy Policy</a>
-          <a href="#" className="hover:text-pure-white transition-colors">Terms of Service</a>
-        </div>
+        <p>&copy; 2026 3NT STUDIO. ALL RIGHTS RESERVED. | Design by CTRLBuild.</p>
       </div>
     </footer>
   );
 };
+

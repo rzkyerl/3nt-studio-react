@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import multicamImage from '../../../../assets/Photo/mldspot/6.png';
+import multicamImage from '../../../../assets/Photo/mldspot/6.webp';
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 24 },

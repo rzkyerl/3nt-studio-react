@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import documentationImage from '../../../../assets/Photo/fifa/3.png';
+import documentationImage from '../../../../assets/Photo/fifa/3.webp';
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 24 },

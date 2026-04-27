@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import teleprompterImage from '../../../../assets/Photo/services-assets/teleprompter.jpg';
+import teleprompterImage from '../../../../assets/Photo/services-assets/teleprompter.webp';
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 24 },

@@ -4,9 +4,9 @@ import { useState, useEffect } from 'react';
 import { PortableText } from '@portabletext/react';
 import * as adminService from '../../../services/adminService';
 
-import StaffProductOwner from '../../../assets/Photo/Staff Production/Bayu Tri Novianto.jpeg';
-import StaffArtDirection from '../../../assets/Photo/Staff Production/Amr Fauzan Art Director.png';
-import StaffAssistant from '../../../assets/Photo/Staff Production/Giyan Eko Putranto.jpeg';
+import StaffProductOwner from '../../../assets/Photo/Staff Production/Bayu Tri Novianto.webp';
+import StaffArtDirection from '../../../assets/Photo/Staff Production/Amr Fauzan Art Director.webp';
+import StaffAssistant from '../../../assets/Photo/Staff Production/Giyan Eko Putranto.webp';
 
 const defaultTeam = [
   { id: '1', name: "Bayu Tri Novianto", role: "Owner 3NT Studio", imageUrl: StaffProductOwner },

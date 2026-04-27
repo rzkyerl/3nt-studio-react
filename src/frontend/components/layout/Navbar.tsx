@@ -3,8 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import { NavLink, Link, useLocation } from 'react-router-dom';
 import { cn } from '../../lib/utils';
-import logoBlack from '../../assets/Photo/logo-black.png';
-import logoWhite from '../../assets/Photo/logo-white.png';
+import logoBlack from '../../assets/Photo/logo-black.webp';
+import logoWhite from '../../assets/Photo/logo-white.webp';
 
 const navLinks = [
   { name: 'Home', href: '/' },
