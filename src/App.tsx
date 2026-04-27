@@ -17,6 +17,8 @@ import BroadcastServicePage from './frontend/pages/Pricing/sections/services/Bro
 import DroneServicePage from './frontend/pages/Pricing/sections/services/Drone';
 import TeleprompterServicePage from './frontend/pages/Pricing/sections/services/Teleprompter';
 import AdminDashboard from './backend/admin/pages/Admin/Dashboard';
+import { ReactLenis } from 'lenis/react';
+import 'lenis/dist/lenis.css';
 import './App.css';
 
 function ScrollToTop() {
@@ -82,10 +84,12 @@ function AppContent() {
 
 function App() {
   return (
-    <Router>
-      <ScrollToTop />
-      <AppContent />
-    </Router>
+    <ReactLenis root>
+      <Router>
+        <ScrollToTop />
+        <AppContent />
+      </Router>
+    </ReactLenis>
   );
 }
 

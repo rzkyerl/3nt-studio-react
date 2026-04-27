@@ -24,9 +24,8 @@
     @apply font-heading;
   }
 
-  /* Smooth scroll for anchor links */
   html {
-    scroll-behavior: smooth;
+    /* Lenis handles smooth scrolling */
   }
 
   @keyframes slow-zoom {
