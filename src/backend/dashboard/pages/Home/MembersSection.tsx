@@ -7,7 +7,6 @@ import {
   updateDoc,
   deleteDoc,
   uploadImage,
-  imageUrl,
 } from "../../services/sanityService";
 import { Trash2, Pencil, Plus, Loader2, X, UploadCloud } from "lucide-react";
 
@@ -104,7 +103,7 @@ export default function MembersSection() {
       } else {
         const id = await createDoc(DOC_TYPE, data);
         setMembers((prev) => [
-          { id, ...data, imageUrl: imagePreview },
+          { id, ...data, imageUrl: imagePreview } as Member,
           ...prev,
         ]);
         showToast("Member added!");

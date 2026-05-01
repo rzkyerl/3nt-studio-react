@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { client } from "../../../sanity/client";
-import { ChevronLeftIcon, ChevronUpIcon } from "../../icons";
+import { ChevronLeftIcon } from "../../icons";
 
 interface BookingDate {
   date: string;

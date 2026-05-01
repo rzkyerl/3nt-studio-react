@@ -7,7 +7,6 @@ import {
   updateDoc,
   deleteDoc,
   uploadImage,
-  imageUrl,
 } from "../../services/sanityService";
 import { Trash2, Pencil, Plus, Loader2, X, UploadCloud } from "lucide-react";
 
@@ -102,7 +101,7 @@ export default function ClientsSection() {
         showToast("Client updated!");
       } else {
         const id = await createDoc(DOC_TYPE, data);
-        setClients((prev) => [{ id, ...data, logoUrl: imagePreview }, ...prev]);
+        setClients((prev) => [{ id, ...data, logoUrl: imagePreview } as Client, ...prev]);
         showToast("Client added!");
       }
       setShowModal(false);

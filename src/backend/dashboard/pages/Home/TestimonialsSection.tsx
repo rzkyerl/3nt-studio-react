@@ -107,7 +107,7 @@ export default function TestimonialsSection() {
         showToast("Testimonial updated!");
       } else {
         const id = await createDoc(DOC_TYPE, data);
-        setItems((prev) => [{ id, ...data, imageUrl: imagePreview }, ...prev]);
+        setItems((prev) => [{ id, ...data, imageUrl: imagePreview } as Testimonial, ...prev]);
         showToast("Testimonial added!");
       }
       setShowModal(false);

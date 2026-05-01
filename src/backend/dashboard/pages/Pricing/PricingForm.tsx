@@ -5,7 +5,7 @@ import PageMeta from "../../components/common/PageMeta";
 import { client } from "../../../sanity/client";
 import {
   Loader2, Save, X, Upload, AlertTriangle, CheckCircle2,
-  Plus, Trash2, GripVertical, ChevronDown, ChevronUp,
+  Plus, Trash2, GripVertical,
 } from "lucide-react";
 
 // ─── Types ────────────────────────────────────────────────────

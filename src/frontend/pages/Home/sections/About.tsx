@@ -92,7 +92,7 @@ export const About = ({ data }: { data: any }) => {
               <span className="text-xs uppercase tracking-[0.4em] text-medium-gray font-bold">{t('about_label')}</span>
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-heading leading-tight">
                 {isValidPortableText(aboutData.aboutTitle) ? (
-                  <PortableText value={aboutData.aboutTitle} components={components} />
+                  <PortableText value={aboutData.aboutTitle as any} components={components} />
                 ) : (
                   <span dangerouslySetInnerHTML={{ __html: String(aboutData.aboutTitle || '').replace('\n', '<br />') }} />
                 )}
@@ -101,7 +101,7 @@ export const About = ({ data }: { data: any }) => {
             
             <div className="text-medium-gray text-lg leading-relaxed max-w-xl prose prose-slate">
               {isValidPortableText(aboutData.aboutText1) ? (
-                <PortableText value={aboutData.aboutText1} />
+                <PortableText value={aboutData.aboutText1 as any} />
               ) : (
                 <p>{String(aboutData.aboutText1 || '')}</p>
               )}
@@ -109,7 +109,7 @@ export const About = ({ data }: { data: any }) => {
             
             <div className="text-medium-gray text-lg leading-relaxed max-w-xl prose prose-slate">
               {isValidPortableText(aboutData.aboutText2) ? (
-                <PortableText value={aboutData.aboutText2} />
+                <PortableText value={aboutData.aboutText2 as any} />
               ) : (
                 <p>{String(aboutData.aboutText2 || '')}</p>
               )}

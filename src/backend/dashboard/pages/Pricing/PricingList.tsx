@@ -10,7 +10,6 @@ import {
   Trash2,
   AlertTriangle,
   CheckCircle2,
-  X,
   Image as ImageIcon,
   ToggleLeft,
   ToggleRight,
