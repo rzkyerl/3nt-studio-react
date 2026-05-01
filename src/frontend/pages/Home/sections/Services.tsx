@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
+import { useLanguage } from '../../../lib/LanguageContext';
 
 import fifa3 from '../../../assets/Photo/fifa/3.webp';
 import streaming from '../../../assets/Photo/services-assets/streaming-equipement.webp';
@@ -8,53 +9,61 @@ import eventProduction from '../../../assets/Photo/mldspot/6.webp';
 import drone from '../../../assets/Photo/services-assets/drone.webp';
 import photobooth from '../../../assets/Photo/services-assets/photobooth.webp';
 
-const services = [
+const serviceKeys = [
   {
     id: '1',
-    title: 'Event Production',
+    titleKey: 'svc_event_title',
     imageUrl: eventProduction,
-    description: 'End-to-end production solutions for your biggest moments.',
+    descKey: 'svc_event_desc',
     href: '/services/multicam',
   },
   {
     id: '2',
-    title: 'Photobooth Experience',
+    titleKey: 'svc_photobooth_title',
     imageUrl: photobooth,
-    description: 'High-end photo booth systems for engaging events.',
+    descKey: 'svc_photobooth_desc',
     href: '/services/photobooth',
   },
   {
     id: '3',
-    title: 'Documentation',
+    titleKey: 'svc_documentation_title',
     imageUrl: fifa3,
-    description: 'Professional photography and videography documentation.',
+    descKey: 'svc_documentation_desc',
     href: '/services/documentation',
   },
   {
     id: '4',
-    title: 'Streaming & Broadcast',
+    titleKey: 'svc_streaming_title',
     imageUrl: streaming,
-    description: 'High-quality live streaming for any platform.',
+    descKey: 'svc_streaming_desc',
     href: '/services/streaming',
   },
   {
     id: '5',
-    title: 'Aerial Production',
+    titleKey: 'svc_aerial_title',
     imageUrl: drone,
-    description: 'Cinematic drone shots for perspective and coverage.',
+    descKey: 'svc_aerial_desc',
     href: '/services/drone',
   },
   {
     id: '6',
-    title: 'Additional Tools',
+    titleKey: 'svc_tools_title',
     imageUrl: teleprompter,
-    description: 'Specialized equipment and production support.',
+    descKey: 'svc_tools_desc',
     href: '/services/teleprompter',
   },
 ];
 
 export const Services = () => {
   const [activeIndex, setActiveIndex] = useState(0);
+  const { t } = useLanguage();
+
+  const services = serviceKeys.map((s) => ({
+    ...s,
+    title: t(s.titleKey),
+    description: t(s.descKey),
+  }));
+
   const activeService = services[activeIndex];
 
   return (
@@ -67,7 +76,7 @@ export const Services = () => {
             viewport={{ once: true }}
             className="text-xs uppercase tracking-[0.4em] text-medium-gray font-bold"
           >
-            What We Do
+            {t('services_label')}
           </motion.span>
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
@@ -85,7 +94,7 @@ export const Services = () => {
             transition={{ delay: 0.2 }}
             className="text-medium-gray max-w-2xl mx-auto leading-relaxed"
           >
-            We provide complete production support for events, brands, and live experiences.
+            {t('services_subtitle')}
           </motion.p>
         </div>
 
@@ -176,7 +185,7 @@ export const Services = () => {
               />
             </div>
             <div className="mt-4 flex items-center justify-between">
-              <p className="text-xs uppercase tracking-[0.3em] text-medium-gray font-bold">Service Preview</p>
+              <p className="text-xs uppercase tracking-[0.3em] text-medium-gray font-bold">{t('services_preview')}</p>
               <p className="text-sm font-semibold">{activeService.title}</p>
             </div>
           </motion.div>

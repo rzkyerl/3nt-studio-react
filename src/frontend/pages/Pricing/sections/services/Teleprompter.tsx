@@ -1,17 +1,16 @@
 import { motion } from 'framer-motion';
 import teleprompterImage from '../../../../assets/Photo/services-assets/teleprompter.webp';
+import {
+  teleprompterStartingPrice,
+  teleprompterPackages,
+  teleprompterIncludes,
+  type PriceItem,
+} from '../pricingData';
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 24 },
   visible: { opacity: 1, y: 0 },
 };
-
-const teleprompterPackages = [
-  { label: 'Teleprompter 6 Jam', price: '1.500.000' },
-  { label: 'Teleprompter 1 Hari', price: '2.500.000' },
-];
-
-const includeItems = ['Laptop', 'Prompter Kit', 'HDMI Cable', 'Operator'];
 
 const TeleprompterServicePage = () => {
   return (
@@ -36,7 +35,7 @@ const TeleprompterServicePage = () => {
 
             <div className="border-l-2 border-primary-black pl-5">
               <p className="text-[10px] uppercase tracking-[0.3em] text-medium-gray mb-2">Starting Price</p>
-              <p className="text-3xl md:text-4xl font-bold italic">Starting from 1.500.000</p>
+              <p className="text-3xl md:text-4xl font-bold italic">Starting from {teleprompterStartingPrice}</p>
             </div>
           </motion.div>
 
@@ -59,7 +58,7 @@ const TeleprompterServicePage = () => {
             Rental package by operation duration
           </p>
           <div className="border-y border-border-gray">
-            {teleprompterPackages.map((item, index) => (
+            {teleprompterPackages.map((item: PriceItem, index: number) => (
               <motion.div
                 key={item.label}
                 initial="hidden"
@@ -84,7 +83,7 @@ const TeleprompterServicePage = () => {
             Included operational tools and crew
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-            {includeItems.map((item, index) => (
+            {teleprompterIncludes.map((item: string, index: number) => (
               <motion.div
                 key={item}
                 initial="hidden"

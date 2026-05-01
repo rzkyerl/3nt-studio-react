@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { PortableText } from '@portabletext/react';
 import * as adminService from '../../../services/adminService';
+import { useLanguage } from '../../../lib/LanguageContext';
 
 const defaultTestimonials = [
   {
@@ -30,6 +31,12 @@ const defaultTestimonials = [
 
 export const Testimonials = () => {
   const [testimonials, setTestimonials] = useState<any[]>([]);
+  const { t } = useLanguage();
+
+  // Helper function to safely check if value is valid PortableText
+  const isValidPortableText = (value: any): boolean => {
+    return Array.isArray(value) && value.length > 0 && value.every(block => block && typeof block === 'object' && block._type);
+  };
 
   useEffect(() => {
     const fetchTestimonialsData = async () => {
@@ -47,7 +54,7 @@ export const Testimonials = () => {
     <section className="section-padding bg-light-gray overflow-hidden">
       <div className="container-custom">
         <div className="text-center mb-24 space-y-4">
-          <span className="text-xs uppercase tracking-[0.4em] text-medium-gray font-bold">Kind Words</span>
+          <span className="text-xs uppercase tracking-[0.4em] text-medium-gray font-bold">{t('testimonials_label')}</span>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-heading italic font-light">
             Client <span className="not-italic font-bold">Experiences</span>
           </h2>
@@ -67,10 +74,10 @@ export const Testimonials = () => {
               
               <div className="relative z-10">
                 <div className="text-medium-gray text-lg leading-relaxed italic mb-10 group-hover:text-primary-black transition-colors prose-slate">
-                  {Array.isArray(testimonial.quote) ? (
+                  {isValidPortableText(testimonial.quote) ? (
                     <PortableText value={testimonial.quote} />
                   ) : (
-                    <p>"{testimonial.quote}"</p>
+                    <p>"{String(testimonial.quote || '')}"</p>
                   )}
                 </div>
                 

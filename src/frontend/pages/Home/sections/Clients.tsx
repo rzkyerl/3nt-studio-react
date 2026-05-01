@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import * as adminService from '../../../services/adminService';
+import { useLanguage } from '../../../lib/LanguageContext';
 
 // Import local logos
 import logoKemenhub from '../../../assets/Photo/logo-client/logo-kementrian-perhubungan-ri.webp';
@@ -39,6 +40,7 @@ const defaultClients = [
 
 export const Clients = () => {
   const [clients, setClients] = useState<any[]>([]);
+  const { t } = useLanguage();
 
   useEffect(() => {
     const fetchClientsData = async () => {
@@ -62,7 +64,7 @@ export const Clients = () => {
             viewport={{ once: true }}
             className="text-xs uppercase tracking-[0.4em] text-medium-gray font-bold"
           >
-            Trusted By
+            {t('clients_label')}
           </motion.span>
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
@@ -71,7 +73,7 @@ export const Clients = () => {
             transition={{ delay: 0.1 }}
             className="text-4xl md:text-5xl font-heading italic font-light"
           >
-            Our <span className="not-italic font-bold">Clients</span>
+            {t('clients_heading_italic')} <span className="not-italic font-bold">{t('clients_heading_bold')}</span>
           </motion.h2>
         </div>
 

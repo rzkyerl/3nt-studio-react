@@ -1,6 +1,6 @@
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '../../../lib/utils';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import * as adminService from '../../../services/adminService';
 import { urlFor } from '../../../../backend/sanity/client';
 
@@ -125,11 +125,197 @@ const staticPortfolioGroups: ProjectGroup[] = [
   }
 ];
 
+interface LightboxState {
+  groupTitle: string;
+  items: PortfolioItem[];
+  index: number;
+}
+
+// ─── Lightbox Component ───────────────────────────────────────────────────────
+const Lightbox = ({
+  state,
+  onClose,
+  onPrev,
+  onNext,
+  onGoTo,
+}: {
+  state: LightboxState;
+  onClose: () => void;
+  onPrev: () => void;
+  onNext: () => void;
+  onGoTo: (index: number) => void;
+}) => {
+  const item = state.items[state.index];
+  const total = state.items.length;
+  const src = item.url || item.image;
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+      if (e.key === 'ArrowLeft') onPrev();
+      if (e.key === 'ArrowRight') onNext();
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [onClose, onPrev, onNext]);
+
+  // Lock body scroll
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = ''; };
+  }, []);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.25 }}
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-primary-black/95 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      {/* Close button */}
+      <button
+        type="button"
+        onClick={onClose}
+        className="absolute top-5 right-5 z-10 flex items-center justify-center w-10 h-10 border border-pure-white/30 text-pure-white hover:bg-pure-white hover:text-primary-black transition-colors"
+        aria-label="Close"
+      >
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M1 1L15 15M15 1L1 15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+        </svg>
+      </button>
+
+      {/* Counter + title */}
+      <div className="absolute top-5 left-5 z-10 flex items-center gap-4">
+        <span className="text-xs font-bold tracking-[0.3em] text-pure-white/60 uppercase">
+          {state.groupTitle}
+        </span>
+        <span className="text-xs font-bold tracking-[0.3em] text-pure-white/40">
+          {String(state.index + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}
+        </span>
+      </div>
+
+      {/* Prev button */}
+      {total > 1 && (
+        <button
+          type="button"
+          onClick={(e) => { e.stopPropagation(); onPrev(); }}
+          className="absolute left-4 md:left-8 z-10 flex items-center justify-center w-10 h-10 border border-pure-white/30 text-pure-white hover:bg-pure-white hover:text-primary-black transition-colors"
+          aria-label="Previous"
+        >
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M10 2L4 8L10 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </button>
+      )}
+
+      {/* Media */}
+      <motion.div
+        key={`${state.index}`}
+        initial={{ opacity: 0, scale: 0.96 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.96 }}
+        transition={{ duration: 0.3 }}
+        className="relative max-w-[90vw] max-h-[85vh] flex items-center justify-center"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {item.type === 'video' && item.video ? (
+          <video
+            src={item.video}
+            className="max-w-[90vw] max-h-[85vh] object-contain"
+            controls
+            autoPlay
+            playsInline
+          />
+        ) : (
+          <img
+            src={src}
+            alt={`${state.groupTitle} ${state.index + 1}`}
+            className="max-w-[90vw] max-h-[85vh] object-contain select-none"
+            draggable={false}
+          />
+        )}
+      </motion.div>
+
+      {/* Next button */}
+      {total > 1 && (
+        <button
+          type="button"
+          onClick={(e) => { e.stopPropagation(); onNext(); }}
+          className="absolute right-4 md:right-8 z-10 flex items-center justify-center w-10 h-10 border border-pure-white/30 text-pure-white hover:bg-pure-white hover:text-primary-black transition-colors"
+          aria-label="Next"
+        >
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M6 2L12 8L6 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </button>
+      )}
+
+      {/* Thumbnail strip */}
+      {total > 1 && (
+        <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex gap-2 max-w-[90vw] overflow-x-auto px-2">
+          {state.items.map((thumb, i) => {
+            const thumbSrc = thumb.url || thumb.image;
+            return (
+              <button
+                key={thumb.id}
+                type="button"
+                onClick={(e) => { e.stopPropagation(); onGoTo(i); }}
+                className={cn(
+                  "flex-shrink-0 w-12 h-12 overflow-hidden border-2 transition-all",
+                  i === state.index ? "border-pure-white opacity-100" : "border-transparent opacity-40 hover:opacity-70"
+                )}
+                aria-label={`Go to image ${i + 1}`}
+              >
+                {thumb.type === 'video' ? (
+                  <div className="w-full h-full bg-pure-white/10 flex items-center justify-center">
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor" className="text-pure-white">
+                      <path d="M3 2L10 6L3 10V2Z"/>
+                    </svg>
+                  </div>
+                ) : (
+                  <img src={thumbSrc} alt="" className="w-full h-full object-cover" draggable={false} />
+                )}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </motion.div>
+  );
+};
+
+// ─── Main Portfolio Component ─────────────────────────────────────────────────
 export const Portfolio = () => {
   const [dynamicGroups, setDynamicGroups] = useState<ProjectGroup[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const [lightbox, setLightbox] = useState<LightboxState | null>(null);
   const groupsPerPage = 5;
+
+  const openLightbox = useCallback((group: ProjectGroup, index: number) => {
+    setLightbox({ groupTitle: group.title, items: group.items, index });
+  }, []);
+
+  const closeLightbox = useCallback(() => setLightbox(null), []);
+
+  const prevItem = useCallback(() => {
+    setLightbox((prev) =>
+      prev ? { ...prev, index: (prev.index - 1 + prev.items.length) % prev.items.length } : null
+    );
+  }, []);
+
+  const nextItem = useCallback(() => {
+    setLightbox((prev) =>
+      prev ? { ...prev, index: (prev.index + 1) % prev.items.length } : null
+    );
+  }, []);
+
+  const goToItem = useCallback((index: number) => {
+    setLightbox((prev) => prev ? { ...prev, index } : null);
+  }, []);
 
   useEffect(() => {
     const fetchPortfolio = async () => {
@@ -223,6 +409,18 @@ export const Portfolio = () => {
 
   return (
     <section id="portfolio" className="bg-pure-white py-32 overflow-hidden">
+      {/* Lightbox */}
+      <AnimatePresence>
+        {lightbox && (
+          <Lightbox
+            state={lightbox}
+            onClose={closeLightbox}
+            onPrev={prevItem}
+            onNext={nextItem}
+            onGoTo={goToItem}
+          />
+        )}
+      </AnimatePresence>
       <div className="container-custom">
         <div className="flex flex-col mb-24">
           <motion.div
@@ -272,6 +470,7 @@ export const Portfolio = () => {
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6, delay: index * 0.1 }}
+                    onClick={() => openLightbox(group, index)}
                     className={cn(
                       "group relative bg-light-gray overflow-hidden cursor-pointer",
                       item.className
@@ -294,6 +493,20 @@ export const Portfolio = () => {
                       />
                     )}
                     <div className="absolute inset-0 bg-primary-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    {/* Expand icon */}
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                      <div className="w-10 h-10 border border-pure-white flex items-center justify-center">
+                        {item.type === 'video' ? (
+                          <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" className="text-pure-white">
+                            <path d="M3 2L12 7L3 12V2Z"/>
+                          </svg>
+                        ) : (
+                          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="text-pure-white">
+                            <path d="M1 5V1H5M9 1H13V5M13 9V13H9M5 13H1V9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        )}
+                      </div>
+                    </div>
                   </motion.div>
                 ))}
               </div>

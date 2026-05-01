@@ -5,7 +5,6 @@ import { About } from './sections/About';
 import { Services } from './sections/Services';
 import { Clients } from './sections/Clients';
 import { Testimonials } from './sections/Testimonials';
-import { FadeIn } from '../../components/ui/FadeIn';
 import { Loader2 } from 'lucide-react';
 
 const Home = () => {
@@ -13,6 +12,11 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Set a timeout to stop loading after 2 seconds regardless of data fetch status
+    const timeout = setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+
     const fetchHomeData = async () => {
       try {
         const data = await adminService.getDocument('content', 'home');
@@ -22,10 +26,13 @@ const Home = () => {
       } catch (error) {
         console.error("Error fetching home content:", error);
       } finally {
+        clearTimeout(timeout);
         setLoading(false);
       }
     };
     fetchHomeData();
+
+    return () => clearTimeout(timeout);
   }, []);
 
   if (loading) {
@@ -39,10 +46,10 @@ const Home = () => {
   return (
     <div className="bg-pure-white">
       <Hero data={homeData} />
-      <FadeIn><About data={homeData} /></FadeIn>
-      <FadeIn><Services /></FadeIn>
-      <FadeIn><Clients /></FadeIn>
-      <FadeIn><Testimonials /></FadeIn>
+      <About data={homeData} />
+      <Services />
+      <Clients />
+      <Testimonials />
     </div>
   );
 };

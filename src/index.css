@@ -25,7 +25,7 @@
   }
 
   html {
-    /* Lenis handles smooth scrolling */
+    scroll-behavior: smooth;
   }
 
   @keyframes slow-zoom {

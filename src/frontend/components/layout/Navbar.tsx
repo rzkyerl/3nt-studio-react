@@ -3,25 +3,27 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import { NavLink, Link, useLocation } from 'react-router-dom';
 import { cn } from '../../lib/utils';
+import { useLanguage } from '../../lib/LanguageContext';
 import logoBlack from '../../assets/Photo/logo-black.webp';
 import logoWhite from '../../assets/Photo/logo-white.webp';
-
-const navLinks = [
-  { name: 'Home', href: '/' },
-  { name: 'Portofolio', href: '/portfolio' },
-  { name: 'Services', href: '/pricing' },
-  { name: 'Location', href: '/location' },
-  { name: 'Booking', href: '/booking' },
-  { name: 'Photobooth', href: '/photobooth' },
-];
 
 export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const { t } = useLanguage();
 
   const isHomePage = location.pathname === '/';
   const isAdminPage = location.pathname.startsWith('/admin');
+
+  const navLinks = [
+    { nameKey: 'nav_home', href: '/' },
+    { nameKey: 'nav_portfolio', href: '/portfolio' },
+    { nameKey: 'nav_services', href: '/pricing' },
+    { nameKey: 'nav_location', href: '/location' },
+    { nameKey: 'nav_booking', href: '/booking' },
+    { nameKey: 'nav_photobooth', href: '/photobooth' },
+  ];
 
   useEffect(() => {
     const handleScroll = () => {
@@ -35,6 +37,7 @@ export const Navbar = () => {
 
   // Use scrolled style (white bg, black text) for all other pages
   const navStyle = isHomePage && !isScrolled ? 'transparent' : 'scrolled';
+
 
   return (
     <nav
@@ -59,7 +62,7 @@ export const Navbar = () => {
         <div className="hidden md:flex items-center gap-10">
           {navLinks.map((link) => (
             <NavLink
-              key={link.name}
+              key={link.nameKey}
               to={link.href}
               className={({ isActive }) => cn(
                 'text-sm uppercase tracking-widest font-medium transition-colors duration-300 hover:text-medium-gray',
@@ -67,9 +70,12 @@ export const Navbar = () => {
                 isActive && (navStyle === 'scrolled' ? 'border-b border-primary-black' : 'border-b border-pure-white')
               )}
             >
-              {link.name}
+              {t(link.nameKey)}
             </NavLink>
           ))}
+
+
+
           <Link to="/booking">
             <button className={cn(
               'px-6 py-2 border transition-all duration-300 uppercase tracking-widest text-xs font-semibold cursor-pointer',
@@ -77,7 +83,7 @@ export const Navbar = () => {
                 ? 'border-primary-black bg-primary-black text-pure-white hover:bg-transparent hover:text-primary-black'
                 : 'border-pure-white bg-pure-white text-primary-black hover:bg-transparent hover:text-pure-white'
             )}>
-              Book Now
+              {t('nav_book_now')}
             </button>
           </Link>
         </div>
@@ -107,7 +113,7 @@ export const Navbar = () => {
             <div className="flex flex-col items-center gap-8 py-10">
               {navLinks.map((link, index) => (
                 <motion.div
-                  key={link.name}
+                  key={link.nameKey}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.05 }}
@@ -120,20 +126,22 @@ export const Navbar = () => {
                       isActive && "italic font-bold"
                     )}
                   >
-                    {link.name}
+                    {t(link.nameKey)}
                   </NavLink>
                 </motion.div>
               ))}
               
+
+
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: navLinks.length * 0.05 }}
-                className="mt-6"
+                className="mt-4"
               >
                 <Link to="/booking" onClick={() => setIsMobileMenuOpen(false)}>
                   <button className="px-12 py-4 bg-primary-black text-pure-white uppercase tracking-[0.2em] text-xs font-bold shadow-lg">
-                    Book Now
+                    {t('nav_book_now')}
                   </button>
                 </Link>
               </motion.div>

@@ -1,0 +1,223 @@
+export const translations: Record<string, Record<string, string>> = {
+  en: {
+    // ─── Navbar ───────────────────────────────────────────────
+    nav_home: 'Home',
+    nav_portfolio: 'Portfolio',
+    nav_services: 'Services',
+    nav_location: 'Location',
+    nav_booking: 'Booking',
+    nav_photobooth: 'Photobooth',
+    nav_book_now: 'Book Now',
+
+    // ─── Footer ───────────────────────────────────────────────
+    footer_tagline:
+      'Capturing the essence of every moment through a minimalist lens. Based in the heart of the city, we provide premium photography services for weddings, portraits, and commercial projects.',
+    footer_quick_links: 'Quick Links',
+    footer_get_in_touch: 'Get In Touch',
+    footer_copyright: '© 2026 3NT STUDIO. ALL RIGHTS RESERVED. | Design by CTRLBuild.',
+
+    // ─── Hero ─────────────────────────────────────────────────
+    hero_book_now: 'Book Now',
+    hero_view_portfolio: 'View Portfolio',
+    hero_scroll: 'Scroll',
+
+    // ─── About ────────────────────────────────────────────────
+    about_label: 'About Us',
+    about_learn_more: 'Learn More',
+    about_meet_artists: 'Meet the Artists',
+    about_creative_team: 'The Creative Team',
+
+    // ─── Services (Home) ──────────────────────────────────────
+    services_label: 'What We Do',
+    services_subtitle: 'We provide complete production support for events, brands, and live experiences.',
+    services_preview: 'Service Preview',
+    svc_event_title: 'Event Production',
+    svc_event_desc: 'End-to-end production solutions for your biggest moments.',
+    svc_photobooth_title: 'Photobooth Experience',
+    svc_photobooth_desc: 'High-end photo booth systems for engaging events.',
+    svc_documentation_title: 'Documentation',
+    svc_documentation_desc: 'Professional photography and videography documentation.',
+    svc_streaming_title: 'Streaming & Broadcast',
+    svc_streaming_desc: 'High-quality live streaming for any platform.',
+    svc_aerial_title: 'Aerial Production',
+    svc_aerial_desc: 'Cinematic drone shots for perspective and coverage.',
+    svc_tools_title: 'Additional Tools',
+    svc_tools_desc: 'Specialized equipment and production support.',
+
+    // ─── Testimonials ─────────────────────────────────────────
+    testimonials_label: 'Kind Words',
+
+    // ─── Clients ──────────────────────────────────────────────
+    clients_label: 'Trusted By',
+    clients_heading_italic: 'Our',
+    clients_heading_bold: 'Clients',
+
+    // ─── Booking ──────────────────────────────────────────────
+    booking_contact_label: 'Contact',
+    booking_visit_title: 'Visit Our',
+    booking_visit_subtitle: 'Creative Space',
+    booking_address: 'Address',
+    booking_hours: 'Hours',
+    booking_phone: 'Phone',
+    booking_email: 'Email',
+    booking_reserve_title: 'Reserve Your Session',
+    booking_reserve_subtitle: "Complete the form below and we'll reach out to you within 24 hours.",
+    booking_full_name: 'Full Name',
+    booking_phone_number: 'Phone Number',
+    booking_preferred_date: 'Preferred Date',
+    booking_select_package: 'Select Package',
+    booking_choose_package: 'Choose Package',
+    booking_pkg_classic: 'Classic Session',
+    booking_pkg_wedding: 'Premium Wedding',
+    booking_pkg_commercial: 'Commercial Studio',
+    booking_address: 'Event Address',
+    booking_address_placeholder: 'Enter the event location address...',
+    booking_notes: 'Notes (Optional)',
+    booking_notes_placeholder: 'Tell us about your vision...',
+    booking_name_placeholder: 'Your Name',
+    booking_phone_placeholder: 'Your Phone Number',
+    booking_processing: 'Processing...',
+    booking_reserve_btn: 'Reserve Now',
+    booking_success: 'Booking successful! Redirecting to WhatsApp to complete your reservation...',
+    booking_error: 'There was an error processing your booking. Please try again.',
+
+    // ─── Pricing / Services Page ──────────────────────────────
+    pricing_hero_subtitle: 'Production for Wedding, Corporate, Concert & Live Streaming',
+    pricing_hero_desc: 'Flexible production solutions for events of all sizes — from intimate weddings to large-scale productions.',
+    pricing_request_quotation: 'Request Quotation',
+    pricing_view_services: 'View Services',
+    pricing_trusted_for: 'Trusted For',
+    pricing_our_services: 'Our Services',
+    pricing_view_pricing: 'View Pricing',
+    pricing_starting_from: 'Starting from',
+    pricing_close_details: 'Close Details',
+    pricing_view_details: 'View Details',
+    pricing_custom_title: 'Custom Production',
+    pricing_custom_by: 'By 3NT Studio',
+    pricing_custom_desc:
+      'For large scale events requiring specialized production crews, custom live visual assets, and advanced technical systems. We provide tailored solutions to match your specific event needs.',
+    pricing_start_consultation: 'Start Consultation',
+    pricing_why_title: 'Why 3NT Studio',
+    pricing_reason1_title: 'Professional Crew',
+    pricing_reason1_desc: 'Experienced production team specialized in high-end events.',
+    pricing_reason2_title: 'Broadcast Grade',
+    pricing_reason2_desc: 'Industry standard equipment for the best visual output.',
+    pricing_reason3_title: 'Fast Setup',
+    pricing_reason3_desc: 'Efficient technical deployment and system management.',
+    pricing_reason4_title: 'Nationwide Coverage',
+    pricing_reason4_desc: 'Available for projects across Indonesia.',
+    pricing_cta_title: 'Ready to Work with 3NT Studio?',
+    pricing_send_inquiry: 'Send Inquiry',
+  },
+
+  id: {
+    // ─── Navbar ───────────────────────────────────────────────
+    nav_home: 'Beranda',
+    nav_portfolio: 'Portofolio',
+    nav_services: 'Layanan',
+    nav_location: 'Lokasi',
+    nav_booking: 'Pemesanan',
+    nav_photobooth: 'Photobooth',
+    nav_book_now: 'Pesan Sekarang',
+
+    // ─── Footer ───────────────────────────────────────────────
+    footer_tagline:
+      'Mengabadikan esensi setiap momen melalui lensa minimalis. Berlokasi di jantung kota, kami menyediakan layanan fotografi premium untuk pernikahan, potret, dan proyek komersial.',
+    footer_quick_links: 'Tautan Cepat',
+    footer_get_in_touch: 'Hubungi Kami',
+    footer_copyright: '© 2026 3NT STUDIO. SEMUA HAK DILINDUNGI. | Desain oleh CTRLBuild.',
+
+    // ─── Hero ─────────────────────────────────────────────────
+    hero_book_now: 'Pesan Sekarang',
+    hero_view_portfolio: 'Lihat Portofolio',
+    hero_scroll: 'Gulir',
+
+    // ─── About ────────────────────────────────────────────────
+    about_label: 'Tentang Kami',
+    about_learn_more: 'Pelajari Lebih',
+    about_meet_artists: 'Kenali Para Seniman',
+    about_creative_team: 'Tim Kreatif',
+
+    // ─── Services (Home) ──────────────────────────────────────
+    services_label: 'Apa Yang Kami Lakukan',
+    services_subtitle: 'Kami menyediakan dukungan produksi lengkap untuk acara, brand, dan pengalaman live.',
+    services_preview: 'Pratinjau Layanan',
+    svc_event_title: 'Produksi Acara',
+    svc_event_desc: 'Solusi produksi menyeluruh untuk momen terbesar Anda.',
+    svc_photobooth_title: 'Pengalaman Photobooth',
+    svc_photobooth_desc: 'Sistem photo booth premium untuk acara yang berkesan.',
+    svc_documentation_title: 'Dokumentasi',
+    svc_documentation_desc: 'Dokumentasi foto dan video profesional.',
+    svc_streaming_title: 'Streaming & Siaran',
+    svc_streaming_desc: 'Live streaming berkualitas tinggi untuk semua platform.',
+    svc_aerial_title: 'Produksi Udara',
+    svc_aerial_desc: 'Pengambilan gambar drone sinematik untuk perspektif dan liputan.',
+    svc_tools_title: 'Alat Tambahan',
+    svc_tools_desc: 'Peralatan khusus dan dukungan produksi.',
+
+    // ─── Testimonials ─────────────────────────────────────────
+    testimonials_label: 'Kata-Kata Mereka',
+
+    // ─── Clients ──────────────────────────────────────────────
+    clients_label: 'Dipercaya Oleh',
+    clients_heading_italic: 'Klien',
+    clients_heading_bold: 'Kami',
+
+    // ─── Booking ──────────────────────────────────────────────
+    booking_contact_label: 'Kontak',
+    booking_visit_title: 'Kunjungi',
+    booking_visit_subtitle: 'Ruang Kreatif Kami',
+    booking_address: 'Alamat',
+    booking_hours: 'Jam Operasional',
+    booking_phone: 'Telepon',
+    booking_email: 'Email',
+    booking_reserve_title: 'Reservasi Sesi Anda',
+    booking_reserve_subtitle: 'Isi formulir di bawah dan kami akan menghubungi Anda dalam 24 jam.',
+    booking_full_name: 'Nama Lengkap',
+    booking_phone_number: 'Nomor Telepon',
+    booking_preferred_date: 'Tanggal Pilihan',
+    booking_select_package: 'Pilih Paket',
+    booking_choose_package: 'Pilih Paket',
+    booking_pkg_classic: 'Sesi Klasik',
+    booking_pkg_wedding: 'Pernikahan Premium',
+    booking_pkg_commercial: 'Studio Komersial',
+    booking_address: 'Alamat Acara',
+    booking_address_placeholder: 'Masukkan alamat lokasi acara...',
+    booking_notes: 'Catatan (Opsional)',
+    booking_notes_placeholder: 'Ceritakan visi Anda...',
+    booking_name_placeholder: 'Nama Anda',
+    booking_phone_placeholder: 'Nomor Telepon Anda',
+    booking_processing: 'Memproses...',
+    booking_reserve_btn: 'Reservasi Sekarang',
+    booking_success: 'Pemesanan berhasil! Mengalihkan ke WhatsApp untuk melengkapi reservasi Anda...',
+    booking_error: 'Terjadi kesalahan saat memproses pemesanan Anda. Silakan coba lagi.',
+
+    // ─── Pricing / Services Page ──────────────────────────────
+    pricing_hero_subtitle: 'Produksi untuk Pernikahan, Korporat, Konser & Live Streaming',
+    pricing_hero_desc: 'Solusi produksi fleksibel untuk acara dari semua skala — dari pernikahan intim hingga produksi besar.',
+    pricing_request_quotation: 'Minta Penawaran',
+    pricing_view_services: 'Lihat Layanan',
+    pricing_trusted_for: 'Dipercaya Untuk',
+    pricing_our_services: 'Layanan Kami',
+    pricing_view_pricing: 'Lihat Harga',
+    pricing_starting_from: 'Mulai dari',
+    pricing_close_details: 'Tutup Detail',
+    pricing_view_details: 'Lihat Detail',
+    pricing_custom_title: 'Produksi Kustom',
+    pricing_custom_by: 'Oleh 3NT Studio',
+    pricing_custom_desc:
+      'Untuk acara berskala besar yang membutuhkan kru produksi khusus, aset visual live kustom, dan sistem teknis canggih. Kami menyediakan solusi yang disesuaikan dengan kebutuhan spesifik acara Anda.',
+    pricing_start_consultation: 'Mulai Konsultasi',
+    pricing_why_title: 'Mengapa 3NT Studio',
+    pricing_reason1_title: 'Kru Profesional',
+    pricing_reason1_desc: 'Tim produksi berpengalaman yang ahli dalam acara berkelas tinggi.',
+    pricing_reason2_title: 'Kualitas Broadcast',
+    pricing_reason2_desc: 'Peralatan standar industri untuk output visual terbaik.',
+    pricing_reason3_title: 'Setup Cepat',
+    pricing_reason3_desc: 'Deployment teknis yang efisien dan manajemen sistem.',
+    pricing_reason4_title: 'Jangkauan Nasional',
+    pricing_reason4_desc: 'Tersedia untuk proyek di seluruh Indonesia.',
+    pricing_cta_title: 'Siap Bekerja dengan 3NT Studio?',
+    pricing_send_inquiry: 'Kirim Pertanyaan',
+  },
+};

@@ -1,26 +1,17 @@
 import { motion } from 'framer-motion';
 import documentationImage from '../../../../assets/Photo/fifa/3.webp';
+import {
+  documentationStartingPrice,
+  documentationPhoto,
+  documentationVideo,
+  documentationGear,
+  type PriceItem,
+} from '../pricingData';
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 24 },
   visible: { opacity: 1, y: 0 },
 };
-
-const photoPackages = [
-  { label: '1 Photographer', price: '2.5 jt' },
-  { label: '2 Photographer', price: '4.5 jt' },
-];
-
-const videoPackages = [
-  { label: '1 Videographer', price: '4.5 jt' },
-  { label: '2 Videographer', price: '6.5 jt' },
-];
-
-const gear = [
-  'Sony A7 Mark IV',
-  'Camera Lens',
-  'Flash / External Lighting',
-];
 
 const PriceRow = ({ label, price }: { label: string; price: string }) => (
   <div className="flex items-center justify-between py-5 md:py-6 border-b border-border-gray last:border-b-0">
@@ -51,6 +42,11 @@ const DocumentationServicePage = () => {
             </div>
 
             <div className="border-l-2 border-primary-black pl-5">
+              <p className="text-[10px] uppercase tracking-[0.3em] text-medium-gray mb-2">Starting Price</p>
+              <p className="text-3xl md:text-4xl font-bold italic">Starting from {documentationStartingPrice}</p>
+            </div>
+
+            <div className="border-l-2 border-primary-black pl-5">
               <p className="text-[10px] uppercase tracking-[0.3em] text-medium-gray mb-2">Output</p>
               <p className="text-2xl md:text-3xl font-bold italic">Data via Google Drive</p>
             </div>
@@ -76,7 +72,7 @@ const DocumentationServicePage = () => {
           </div>
 
           <div className="border-y border-border-gray">
-            {photoPackages.map((item, index) => (
+            {documentationPhoto.map((item: PriceItem, index: number) => (
               <motion.div
                 key={item.label}
                 initial="hidden"
@@ -100,7 +96,7 @@ const DocumentationServicePage = () => {
           </div>
 
           <div className="border-y border-border-gray">
-            {videoPackages.map((item, index) => (
+            {documentationVideo.map((item: PriceItem, index: number) => (
               <motion.div
                 key={item.label}
                 initial="hidden"
@@ -120,7 +116,7 @@ const DocumentationServicePage = () => {
         <div className="container-custom space-y-8">
           <h2 className="text-3xl md:text-4xl font-heading font-bold tracking-tight">Gear</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {gear.map((item, index) => (
+            {documentationGear.map((item: string, index: number) => (
               <motion.div
                 key={item}
                 initial="hidden"

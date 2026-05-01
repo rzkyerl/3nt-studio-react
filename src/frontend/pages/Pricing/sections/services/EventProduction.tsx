@@ -1,64 +1,22 @@
 import { motion } from 'framer-motion';
 import multicamImage from '../../../../assets/Photo/mldspot/6.webp';
+import {
+  multicamStartingPrice,
+  multicamFX6,
+  multicamFX6Equipment,
+  multicamZ190,
+  multicamZ190Equipment,
+  multicamNX5R,
+  multicamNX5REquipment,
+  type PriceItem,
+} from '../pricingData';
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 24 },
   visible: { opacity: 1, y: 0 },
 };
 
-const fx6Prices = [
-  { label: '1 Camera', price: '5 jt' },
-  { label: '2 Cameras', price: '10 jt' },
-  { label: '3 Cameras', price: '15 jt' },
-  { label: '4 Cameras', price: '20 jt' },
-];
-
-const z190Prices = [
-  { label: '1 Camera', price: '3.5 jt' },
-  { label: '2 Cameras', price: '6.5 jt' },
-  { label: '3 Cameras', price: '10 jt' },
-  { label: '4 Cameras', price: '12 jt' },
-];
-
-const nx5rPrices = [
-  { label: '1 Camera', price: '3.5 jt' },
-  { label: '2 Cameras', price: '6.5 jt' },
-  { label: '3 Cameras', price: '10 jt' },
-  { label: '4 Cameras', price: '12 jt' },
-];
-
-const fx6Equipment = [
-  'Sony FX6 Cinema 4K',
-  'Blackmagic ATEM Switcher',
-  'Television Studio Pro 4K',
-  'Blackmagic Recorder',
-  'Audio Mixer',
-  'Tripod Camera',
-  'Clearcom Wireless',
-  'Cabling System',
-];
-
-const z190Equipment = [
-  'Sony PXW Z190',
-  'Blackmagic ATEM Studio',
-  'Blackmagic Hyperdeck 4K',
-  'Audio Mixer',
-  'Tripod Camera',
-  'Clearcom Wireless',
-  'Cabling System',
-];
-
-const nx5rEquipment = [
-  'Sony NX5R',
-  'Data Video Switcher',
-  'Blackmagic Recorder',
-  'Audio Mixer',
-  'Tripod Camera',
-  'Clearcom Wireless',
-  'Cabling System',
-];
-
-const PriceCardGrid = ({ items }: { items: { label: string; price: string }[] }) => (
+const PriceCardGrid = ({ items }: { items: PriceItem[] }) => (
   <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 border border-border-gray">
     {items.map((item, index) => (
       <motion.div
@@ -113,7 +71,7 @@ const MulticamServicePage = () => {
 
             <div className="border-l-2 border-primary-black pl-5">
               <p className="text-[10px] uppercase tracking-[0.3em] text-medium-gray mb-2">Starting Price</p>
-              <p className="text-3xl md:text-4xl font-bold italic">Starting from 3.5 jt</p>
+              <p className="text-3xl md:text-4xl font-bold italic">Starting from {multicamStartingPrice}</p>
             </div>
           </motion.div>
 
@@ -132,24 +90,24 @@ const MulticamServicePage = () => {
       <section className="py-16 lg:py-20 border-b border-border-gray">
         <div className="container-custom space-y-8">
           <h2 className="text-3xl md:text-4xl font-heading font-bold tracking-tight">MULTICAMERA SYSTEM - FX6 4K</h2>
-          <PriceCardGrid items={fx6Prices} />
-          <EquipmentList items={fx6Equipment} />
+          <PriceCardGrid items={multicamFX6} />
+          <EquipmentList items={multicamFX6Equipment} />
         </div>
       </section>
 
       <section className="py-16 lg:py-20 border-b border-border-gray">
         <div className="container-custom space-y-8">
           <h2 className="text-3xl md:text-4xl font-heading font-bold tracking-tight">MULTICAMERA - SONY PXW Z190</h2>
-          <PriceCardGrid items={z190Prices} />
-          <EquipmentList items={z190Equipment} />
+          <PriceCardGrid items={multicamZ190} />
+          <EquipmentList items={multicamZ190Equipment} />
         </div>
       </section>
 
       <section className="py-16 lg:py-20">
         <div className="container-custom space-y-8">
           <h2 className="text-3xl md:text-4xl font-heading font-bold tracking-tight">MULTICAMERA - SONY NX5R</h2>
-          <PriceCardGrid items={nx5rPrices} />
-          <EquipmentList items={nx5rEquipment} />
+          <PriceCardGrid items={multicamNX5R} />
+          <EquipmentList items={multicamNX5REquipment} />
         </div>
       </section>
 

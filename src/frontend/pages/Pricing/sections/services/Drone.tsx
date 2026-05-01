@@ -1,75 +1,15 @@
 import { motion } from 'framer-motion';
 import droneImage from '../../../../assets/Photo/services-assets/drone.webp';
+import {
+  droneStartingPrice,
+  droneCategories,
+  type DroneCategoryData,
+} from '../pricingData';
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 24 },
   visible: { opacity: 1, y: 0 },
 };
-
-type DroneItem = {
-  label: string;
-  price: string;
-  duration?: string;
-};
-
-type DroneCategory = {
-  title: string;
-  items: DroneItem[];
-  drone: string;
-};
-
-const droneCategories: DroneCategory[] = [
-  {
-    title: 'Drone Basic',
-    items: [
-      { label: 'Basic 1', price: '1.200.000', duration: 'Max 3 Jam' },
-      { label: 'Basic 2', price: '1.700.000', duration: 'Max 6 Jam' },
-      { label: 'Basic Full', price: '2.700.000', duration: '12 Jam' },
-    ],
-    drone: 'DJI Mavic Pro / DJI Mini 3',
-  },
-  {
-    title: 'Drone Gold',
-    items: [
-      { label: 'Gold 1', price: '850.000', duration: '1 Jam' },
-      { label: 'Gold 2', price: '1.250.000', duration: '3 Jam' },
-      { label: 'Gold 3', price: '1.900.000', duration: '6 Jam' },
-      { label: 'Gold Full', price: '2.500.000', duration: '1 Hari' },
-    ],
-    drone: 'DJI Mavic 2 Pro / Zoom',
-  },
-  {
-    title: 'Drone Platinum',
-    items: [
-      { label: 'Platinum 1', price: '1.500.000', duration: '1 Jam' },
-      { label: 'Platinum 2', price: '2.500.000', duration: '3 Jam' },
-      { label: 'Platinum 3', price: '3.500.000', duration: '6 Jam' },
-      { label: 'Platinum Full', price: '4.500.000', duration: '1 Hari' },
-    ],
-    drone: 'DJI Mavic 3',
-  },
-  {
-    title: 'Drone Premium',
-    items: [{ label: 'Platinum Premium Full', price: '5.500.000' }],
-    drone: 'DJI Mavic 4 Pro',
-  },
-  {
-    title: 'Drone Live Cam',
-    items: [
-      { label: 'Drone Live Cam 1', price: '3.700.000' },
-      { label: 'Drone Live Cam 2', price: '5.000.000' },
-    ],
-    drone: '-',
-  },
-  {
-    title: 'Drone FPV',
-    items: [
-      { label: 'Drone FPV', price: '2.500.000' },
-      { label: 'Drone FPV Live Cam', price: '3.500.000' },
-    ],
-    drone: '-',
-  },
-];
 
 const DroneServicePage = () => {
   return (
@@ -94,7 +34,7 @@ const DroneServicePage = () => {
 
             <div className="border-l-2 border-primary-black pl-5">
               <p className="text-[10px] uppercase tracking-[0.3em] text-medium-gray mb-2">Starting Price</p>
-              <p className="text-3xl md:text-4xl font-bold italic">Starting from 850.000</p>
+              <p className="text-3xl md:text-4xl font-bold italic">Starting from {droneStartingPrice}</p>
             </div>
           </motion.div>
 
@@ -110,7 +50,7 @@ const DroneServicePage = () => {
         </div>
       </section>
 
-      {droneCategories.map((category) => (
+      {droneCategories.map((category: DroneCategoryData) => (
         <section key={category.title} className="py-16 lg:py-20 border-b border-border-gray last:border-b-0">
           <div className="container-custom space-y-8">
             <h2 className="text-3xl md:text-4xl font-heading font-bold tracking-tight">{category.title}</h2>
@@ -146,7 +86,7 @@ const DroneServicePage = () => {
         </section>
       ))}
 
-<section className="py-16 lg:py-24 border-t border-border-gray">
+      <section className="py-16 lg:py-24 border-t border-border-gray">
         <div className="container-custom text-center space-y-8">
           <h2 className="text-4xl md:text-6xl font-heading font-bold tracking-tighter">
             Ready to Book Drone Services?
@@ -180,7 +120,7 @@ const DroneServicePage = () => {
             Request Custom Setup
           </button>
         </div>
-      </section> 
+      </section>
     </div>
   );
 };

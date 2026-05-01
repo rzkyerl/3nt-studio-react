@@ -1,11 +1,42 @@
 import { useState, type FormEvent } from 'react';
-import { motion } from 'framer-motion';
-import { MapPin, Phone, Mail, Clock, Loader2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { MapPin, Phone, Mail, Clock, Loader2, CheckCircle2, XCircle } from 'lucide-react';
 import { generateBookingPDF } from '../../../utils/pdfGenerator';
 import { uploadBookingPDFToSanity } from '../../../utils/sanityStorage';
 import { client } from '../../../../backend/sanity/client';
+import { useLanguage } from '../../../lib/LanguageContext';
+
+// --- Toast Component ---
+type ToastType = 'success' | 'error';
+
+interface ToastProps {
+  message: string;
+  type: ToastType;
+  onClose: () => void;
+}
+
+const Toast = ({ message, type, onClose }: ToastProps) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 40, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: 20, scale: 0.95 }}
+      transition={{ duration: 0.35, ease: 'easeOut' }}
+      className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[9999] flex items-center gap-4 px-6 py-4 shadow-2xl min-w-[300px] max-w-sm"
+      style={{ background: type === 'success' ? '#111' : '#fff', color: type === 'success' ? '#fff' : '#111', border: type === 'error' ? '1px solid #111' : 'none' }}
+    >
+      {type === 'success'
+        ? <CheckCircle2 size={20} className="shrink-0 text-white" />
+        : <XCircle size={20} className="shrink-0 text-primary-black" />
+      }
+      <span className="text-sm font-bold uppercase tracking-widest flex-1">{message}</span>
+      <button onClick={onClose} className="opacity-40 hover:opacity-100 transition-opacity text-lg leading-none">✕</button>
+    </motion.div>
+  );
+};
 
 export const LocationSection = () => {
+  const { t } = useLanguage();
   return (
     <section id="location-section" className="section-padding bg-pure-white overflow-hidden">
       <div className="container-custom">
@@ -17,10 +48,10 @@ export const LocationSection = () => {
             transition={{ duration: 0.8 }}
             className="space-y-4 text-center"
           >
-            <span className="text-xs uppercase tracking-[0.4em] text-medium-gray font-bold">Contact</span>
+            <span className="text-xs uppercase tracking-[0.4em] text-medium-gray font-bold">{t('booking_contact_label')}</span>
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-heading leading-tight">
-              Visit Our <br />
-              <span className="italic font-light">Creative Space</span>
+              {t('booking_visit_title')} <br />
+              <span className="italic font-light">{t('booking_visit_subtitle')}</span>
             </h2>
           </motion.div>
 
@@ -33,7 +64,7 @@ export const LocationSection = () => {
           >
             <div className="space-y-4">
               <h4 className="text-sm uppercase tracking-widest font-bold flex items-center gap-3">
-                <MapPin size={18} /> Address
+                <MapPin size={18} /> {t('booking_address')}
               </h4>
               <p className="text-medium-gray text-lg leading-relaxed italic">
                 Gg. Arim 2, RT.003/RW.009, Paninggilan Utara<br />
@@ -42,7 +73,7 @@ export const LocationSection = () => {
             </div>
             <div className="space-y-4">
               <h4 className="text-sm uppercase tracking-widest font-bold flex items-center gap-3">
-                <Clock size={18} /> Hours
+                <Clock size={18} /> {t('booking_hours')}
               </h4>
               <p className="text-medium-gray text-lg leading-relaxed italic">
                 Mon - Fri: 09:00 - 18:00<br />
@@ -51,7 +82,7 @@ export const LocationSection = () => {
             </div>
             <div className="space-y-4">
               <h4 className="text-sm uppercase tracking-widest font-bold flex items-center gap-3">
-                <Phone size={18} /> Phone
+                <Phone size={18} /> {t('booking_phone')}
               </h4>
               <p className="text-medium-gray text-lg leading-relaxed italic">
                 +62 856-9722-9466
@@ -59,7 +90,7 @@ export const LocationSection = () => {
             </div>
             <div className="space-y-4">
               <h4 className="text-sm uppercase tracking-widest font-bold flex items-center gap-3">
-                <Mail size={18} /> Email
+                <Mail size={18} /> {t('booking_email')}
               </h4>
               <p className="text-medium-gray text-lg leading-relaxed italic">
                 3nteamprod@gmail.com
@@ -93,15 +124,99 @@ export const LocationSection = () => {
   );
 };
 
+// All available packages with prices
+const PACKAGES = [
+  // Photobooth - Unlimited
+  { group: 'Photobooth — Unlimited', value: 'photobooth_unlimited_2h', label: '2 Hours', price: 'Rp 3.500.000' },
+  { group: 'Photobooth — Unlimited', value: 'photobooth_unlimited_3h', label: '3 Hours', price: 'Rp 4.500.000' },
+  { group: 'Photobooth — Unlimited', value: 'photobooth_unlimited_4h', label: '4 Hours', price: 'Rp 5.500.000' },
+  // Photobooth - Limited
+  { group: 'Photobooth — Limited', value: 'photobooth_limited_100', label: '100 Prints', price: 'Rp 3.300.000' },
+  { group: 'Photobooth — Limited', value: 'photobooth_limited_200', label: '200 Prints', price: 'Rp 3.800.000' },
+  // Multicam - FX6
+  { group: 'Multicam — FX6 Cinema 4K', value: 'multicam_fx6_1cam', label: '1 Camera', price: 'Rp 5.000.000' },
+  { group: 'Multicam — FX6 Cinema 4K', value: 'multicam_fx6_2cam', label: '2 Camera', price: 'Rp 10.000.000' },
+  { group: 'Multicam — FX6 Cinema 4K', value: 'multicam_fx6_3cam', label: '3 Camera', price: 'Rp 15.000.000' },
+  // Multicam - Sony Z190
+  { group: 'Multicam — Sony Z190', value: 'multicam_z190_1cam', label: '1 Camera', price: 'Rp 3.500.000' },
+  { group: 'Multicam — Sony Z190', value: 'multicam_z190_2cam', label: '2 Camera', price: 'Rp 6.500.000' },
+  // Multicam - Sony NX5R
+  { group: 'Multicam — Sony NX5R', value: 'multicam_nx5r_1cam', label: '1 Camera', price: 'Rp 3.500.000' },
+  { group: 'Multicam — Sony NX5R', value: 'multicam_nx5r_2cam', label: '2 Camera', price: 'Rp 6.500.000' },
+  // Drone
+  { group: 'Aerial Drone', value: 'drone_basic', label: 'Drone Basic', price: 'Rp 2.500.000' },
+  { group: 'Aerial Drone', value: 'drone_gold', label: 'Drone Gold', price: 'Rp 4.500.000' },
+  { group: 'Aerial Drone', value: 'drone_platinum', label: 'Drone Platinum', price: 'Rp 7.500.000' },
+  { group: 'Aerial Drone', value: 'drone_fpv', label: 'Drone FPV', price: 'Rp 5.500.000' },
+  // Documentation - Photo
+  { group: 'Documentation — Photo', value: 'doc_photo_1', label: '1 Photographer', price: 'Rp 2.500.000' },
+  { group: 'Documentation — Photo', value: 'doc_photo_2', label: '2 Photographer', price: 'Rp 4.500.000' },
+  // Documentation - Video
+  { group: 'Documentation — Video', value: 'doc_video_1', label: '1 Videographer', price: 'Rp 4.500.000' },
+  { group: 'Documentation — Video', value: 'doc_video_2', label: '2 Videographer', price: 'Rp 6.500.000' },
+  // Broadcast & Streaming
+  { group: 'Broadcast & Streaming', value: 'stream_vmix', label: 'VMIX + VJ', price: 'Rp 2.500.000' },
+  { group: 'Broadcast & Streaming', value: 'stream_resolume', label: 'Resolume + VJ', price: 'Rp 3.500.000' },
+  { group: 'Broadcast & Streaming', value: 'stream_hybrid', label: 'Hybrid System', price: 'Rp 8.500.000' },
+  { group: 'Broadcast & Streaming', value: 'stream_social', label: 'Social Media Stream', price: 'Rp 5.500.000' },
+  // Custom
+  { group: 'Custom Production', value: 'custom', label: 'Custom / Konsultasi', price: 'Hubungi Kami' },
+];
+
+// Abbreviation map for booking ID — BKG-{CODE}-{4-digit random}
+const PACKAGE_CODE: Record<string, string> = {
+  photobooth_unlimited_2h:  'PBTU2',
+  photobooth_unlimited_3h:  'PBTU3',
+  photobooth_unlimited_4h:  'PBTU4',
+  photobooth_limited_100:   'PBTL1',
+  photobooth_limited_200:   'PBTL2',
+  multicam_fx6_1cam:        'FX61C',
+  multicam_fx6_2cam:        'FX62C',
+  multicam_fx6_3cam:        'FX63C',
+  multicam_z190_1cam:       'Z1901',
+  multicam_z190_2cam:       'Z1902',
+  multicam_nx5r_1cam:       'NX5R1',
+  multicam_nx5r_2cam:       'NX5R2',
+  drone_basic:              'DRNBS',
+  drone_gold:               'DRNGD',
+  drone_platinum:           'DRNPL',
+  drone_fpv:                'DRNFP',
+  doc_photo_1:              'DCPH1',
+  doc_photo_2:              'DCPH2',
+  doc_video_1:              'DCVD1',
+  doc_video_2:              'DCVD2',
+  stream_vmix:              'STVMX',
+  stream_resolume:          'STRSM',
+  stream_hybrid:            'STHYB',
+  stream_social:            'STSOC',
+  custom:                   'CSTM',
+};
+
+const generateBookingId = (packageValue: string): string => {
+  const code = PACKAGE_CODE[packageValue] ?? 'PKG';
+  const rand = Math.floor(1000 + Math.random() * 9000); // 4-digit number
+  return `BKG-${code}-${rand}`;
+};
+
 export const BookingSection = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null);
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
+    address: '',
     date: '',
     package: '',
     notes: ''
   });
+
+  const showToast = (message: string, type: ToastType) => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 4000);
+  };
+
+  const selectedPackage = PACKAGES.find(p => p.value === formData.package);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -116,12 +231,22 @@ export const BookingSection = () => {
       const pdfUrl = await uploadBookingPDFToSanity(pdfBlob, fileName);
 
       // 3. Save to Sanity for Dashboard
+      const bookingId = generateBookingId(formData.package);
+      const selectedPkg = PACKAGES.find(p => p.value === formData.package);
+      // Parse numeric price from string like "Rp 3.500.000" → 3500000
+      const priceNumeric = selectedPkg?.price
+        ? parseInt(selectedPkg.price.replace(/[^0-9]/g, ''), 10) || 0
+        : 0;
       await client.create({
         _type: 'booking',
+        bookingId,
         name: formData.name,
         phone: formData.phone,
+        address: formData.address,
         date: formData.date,
         package: formData.package,
+        packageLabel: selectedPkg ? `${selectedPkg.group} — ${selectedPkg.label}` : formData.package,
+        price: priceNumeric,
         notes: formData.notes,
         pdfUrl: pdfUrl,
         status: 'pending',
@@ -129,13 +254,17 @@ export const BookingSection = () => {
       });
 
       // 4. Construct WhatsApp message template
-      const adminPhoneNumber = "6285697229466"; // Updated to match the number in LocationSection
+      const adminPhoneNumber = "6285697229466";
+      const packageLabel = selectedPkg
+        ? `${selectedPkg.group} — ${selectedPkg.label} (${selectedPkg.price})`
+        : 'Custom Request';
       const message = `*NEW BOOKING RESERVATION - 3NT STUDIO*
 ----------------------------------------
 *Name:* ${formData.name}
 *Phone:* ${formData.phone}
+*Address:* ${formData.address || '-'}
 *Date:* ${formData.date}
-*Package:* ${formData.package || 'Custom Request'}
+*Package:* ${packageLabel}
 ----------------------------------------
 *Booking PDF:* ${pdfUrl}
 ----------------------------------------
@@ -150,11 +279,11 @@ Sent from 3ntstudio.com`;
       // Open WhatsApp in a new tab
       window.open(whatsappUrl, '_blank');
 
-      alert('Booking successful! Redirecting to WhatsApp to complete your reservation...');
-      setFormData({ name: '', phone: '', date: '', package: '', notes: '' });
+      showToast(t('booking_success'), 'success');
+      setFormData({ name: '', phone: '', address: '', date: '', package: '', notes: '' });
     } catch (error) {
       console.error('Error submitting booking:', error);
-      alert('There was an error processing your booking. Please try again.');
+      showToast(t('booking_error'), 'error');
     } finally {
       setIsSubmitting(false);
     }
@@ -162,6 +291,15 @@ Sent from 3ntstudio.com`;
 
   return (
     <section id="booking-section" className="section-padding bg-pure-white overflow-hidden">
+      <AnimatePresence>
+        {toast && (
+          <Toast
+            message={toast.message}
+            type={toast.type}
+            onClose={() => setToast(null)}
+          />
+        )}
+      </AnimatePresence>
       <div className="container-custom">
         <div className="max-w-4xl mx-auto">
           <motion.div 
@@ -172,16 +310,16 @@ Sent from 3ntstudio.com`;
             className="bg-light-gray p-12 lg:p-20 shadow-2xl relative"
           >
             <div className="mb-12 text-center">
-              <h3 className="text-3xl font-heading font-bold mb-4 uppercase tracking-tighter">Reserve Your Session</h3>
-              <p className="text-medium-gray text-sm uppercase tracking-widest">Complete the form below and we'll reach out to you within 24 hours.</p>
+              <h3 className="text-3xl font-heading font-bold mb-4 uppercase tracking-tighter">{t('booking_reserve_title')}</h3>
+              <p className="text-medium-gray text-sm uppercase tracking-widest">{t('booking_reserve_subtitle')}</p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-10">
               <div className="space-y-1">
-                <label className="text-[10px] uppercase tracking-[0.4em] font-bold text-medium-gray">Full Name</label>
+                <label className="text-[10px] uppercase tracking-[0.4em] font-bold text-medium-gray">{t('booking_full_name')}</label>
                 <input 
                   type="text"
-                  placeholder="Your Name" 
+                  placeholder={t('booking_name_placeholder')} 
                   className="w-full bg-transparent border-b border-border-gray py-3 px-1 focus:outline-none focus:border-primary-black transition-colors duration-300 text-primary-black font-body text-sm"
                   value={formData.name}
                   onChange={(e) => setFormData({...formData, name: e.target.value})}
@@ -190,10 +328,10 @@ Sent from 3ntstudio.com`;
               </div>
               
               <div className="space-y-1">
-                <label className="text-[10px] uppercase tracking-[0.4em] font-bold text-medium-gray">Phone Number</label>
+                <label className="text-[10px] uppercase tracking-[0.4em] font-bold text-medium-gray">{t('booking_phone_number')}</label>
                 <input 
                   type="text"
-                  placeholder="Your Phone Number" 
+                  placeholder={t('booking_phone_placeholder')} 
                   className="w-full bg-transparent border-b border-border-gray py-3 px-1 focus:outline-none focus:border-primary-black transition-colors duration-300 text-primary-black font-body text-sm"
                   value={formData.phone}
                   onChange={(e) => setFormData({...formData, phone: e.target.value})}
@@ -201,37 +339,77 @@ Sent from 3ntstudio.com`;
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                <div className="space-y-1">
-                  <label className="text-[10px] uppercase tracking-[0.4em] font-bold text-medium-gray">Preferred Date</label>
-                  <input 
-                    type="date" 
-                    className="w-full bg-transparent border-b border-border-gray py-3 px-1 focus:outline-none focus:border-primary-black transition-colors duration-300 text-primary-black font-body text-sm"
-                    value={formData.date}
-                    onChange={(e) => setFormData({...formData, date: e.target.value})}
-                    required 
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[10px] uppercase tracking-[0.4em] font-bold text-medium-gray">Select Package</label>
+              <div className="space-y-1">
+                <label className="text-[10px] uppercase tracking-[0.4em] font-bold text-medium-gray">{t('booking_address')}</label>
+                <textarea 
+                  placeholder={t('booking_address_placeholder')} 
+                  className="w-full bg-transparent border-b border-border-gray py-3 px-1 focus:outline-none focus:border-primary-black transition-colors duration-300 text-primary-black font-body text-sm min-h-[80px] resize-none"
+                  value={formData.address}
+                  onChange={(e) => setFormData({...formData, address: e.target.value})}
+                  required
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] uppercase tracking-[0.4em] font-bold text-medium-gray">{t('booking_preferred_date')}</label>
+                <input 
+                  type="date" 
+                  className="w-full bg-transparent border-b border-border-gray py-3 px-1 focus:outline-none focus:border-primary-black transition-colors duration-300 text-primary-black font-body text-sm"
+                  value={formData.date}
+                  onChange={(e) => setFormData({...formData, date: e.target.value})}
+                  required 
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] uppercase tracking-[0.4em] font-bold text-medium-gray">{t('booking_select_package')}</label>
+                <div className="relative">
                   <select 
-                    className="w-full bg-transparent border-b border-border-gray py-3 px-1 focus:outline-none focus:border-primary-black transition-colors duration-300 text-primary-black font-body text-sm uppercase tracking-widest appearance-none"
+                    className="w-full bg-transparent border-b border-border-gray py-3 px-1 focus:outline-none focus:border-primary-black transition-colors duration-300 text-primary-black font-body text-sm appearance-none pr-6"
                     value={formData.package}
                     onChange={(e) => setFormData({...formData, package: e.target.value})}
                     required
                   >
-                    <option value="" disabled>Choose Package</option>
-                    <option value="classic">Classic Session</option>
-                    <option value="wedding">Premium Wedding</option>
-                    <option value="commercial">Commercial Studio</option>
+                    <option value="" disabled>{t('booking_choose_package')}</option>
+                    {/* Group packages by category */}
+                    {Array.from(new Set(PACKAGES.map(p => p.group))).map(group => (
+                      <optgroup key={group} label={group}>
+                        {PACKAGES.filter(p => p.group === group).map(pkg => (
+                          <option key={pkg.value} value={pkg.value}>
+                            {pkg.label} — {pkg.price}
+                          </option>
+                        ))}
+                      </optgroup>
+                    ))}
                   </select>
+                  <span className="pointer-events-none absolute right-1 top-1/2 -translate-y-1/2 text-medium-gray">
+                    ▾
+                  </span>
                 </div>
+
+                {/* Price display when a package is selected */}
+                {selectedPackage && (
+                  <motion.div
+                    key={selectedPackage.value}
+                    initial={{ opacity: 0, y: -6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="mt-3 flex items-center justify-between bg-primary-black text-pure-white px-5 py-3"
+                  >
+                    <span className="text-[10px] uppercase tracking-[0.3em] font-bold opacity-60">
+                      {selectedPackage.group} · {selectedPackage.label}
+                    </span>
+                    <span className="text-sm font-bold italic">
+                      {selectedPackage.price}
+                    </span>
+                  </motion.div>
+                )}
               </div>
 
               <div className="space-y-1">
-                <label className="text-[10px] uppercase tracking-[0.4em] font-bold text-medium-gray">Notes (Optional)</label>
+                <label className="text-[10px] uppercase tracking-[0.4em] font-bold text-medium-gray">{t('booking_notes')}</label>
                 <textarea 
-                  placeholder="Tell us about your vision..." 
+                  placeholder={t('booking_notes_placeholder')} 
                   className="w-full bg-transparent border-b border-border-gray py-3 px-1 focus:outline-none focus:border-primary-black transition-colors duration-300 text-primary-black font-body text-sm min-h-[100px] resize-none"
                   value={formData.notes}
                   onChange={(e) => setFormData({...formData, notes: e.target.value})}
@@ -247,10 +425,10 @@ Sent from 3ntstudio.com`;
                   {isSubmitting ? (
                     <>
                       <Loader2 className="animate-spin" size={16} />
-                      Processing...
+                      {t('booking_processing')}
                     </>
                   ) : (
-                    'Reserve Now'
+                    t('booking_reserve_btn')
                   )}
                 </button>
               </div>

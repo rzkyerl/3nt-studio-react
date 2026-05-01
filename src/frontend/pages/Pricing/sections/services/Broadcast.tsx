@@ -1,18 +1,15 @@
 import { motion } from 'framer-motion';
 import broadcastImage from '../../../../assets/Photo/services-assets/streaming-equipement.webp';
+import {
+  broadcastStartingPrice,
+  broadcastPackages,
+  type PriceItem,
+} from '../pricingData';
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 24 },
   visible: { opacity: 1, y: 0 },
 };
-
-const broadcastPackages = [
-  { label: 'VMIX + VJ', price: '2.5 jt' },
-  { label: 'Laptop Resolume + VJ', price: '3.5 jt' },
-  { label: 'PC Resolume + VJ', price: '5.5 jt' },
-  { label: 'Hybrid System', price: '8.5 jt' },
-  { label: 'Streaming Social Media', price: '5.5 jt' },
-];
 
 const BroadcastServicePage = () => {
   return (
@@ -37,7 +34,7 @@ const BroadcastServicePage = () => {
 
             <div className="border-l-2 border-primary-black pl-5">
               <p className="text-[10px] uppercase tracking-[0.3em] text-medium-gray mb-2">Starting Price</p>
-              <p className="text-3xl md:text-4xl font-bold italic">Starting from 2.5 jt</p>
+              <p className="text-3xl md:text-4xl font-bold italic">Starting from {broadcastStartingPrice}</p>
             </div>
           </motion.div>
 
@@ -60,7 +57,7 @@ const BroadcastServicePage = () => {
             Select package based on playback engine and show complexity.
           </p>
           <div className="border-y border-border-gray">
-            {broadcastPackages.map((item, index) => (
+            {broadcastPackages.map((item: PriceItem, index: number) => (
               <motion.div
                 key={item.label}
                 initial="hidden"

@@ -3,6 +3,7 @@ import { jsPDF } from 'jspdf';
 interface BookingData {
   name: string;
   phone: string;
+  address: string;
   date: string;
   package: string;
   notes: string;
@@ -38,6 +39,7 @@ export const generateBookingPDF = (data: BookingData): Blob => {
   const details = [
     { label: 'Full Name:', value: data.name },
     { label: 'Phone Number:', value: data.phone },
+    { label: 'Event Address:', value: data.address || '-' },
     { label: 'Booking Date:', value: data.date },
     { label: 'Package:', value: data.package || 'Custom Request' },
   ];
