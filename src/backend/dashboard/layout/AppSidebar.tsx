@@ -285,7 +285,7 @@ const AppSidebar: React.FC = () => {
           !isExpanded && !isHovered ? "lg:justify-center" : "justify-start"
         }`}
       >
-        <Link to="/">
+        <Link to="/admin">
           {isExpanded || isHovered || isMobileOpen ? (
             <img
               src={logoBlack}
