@@ -241,18 +241,40 @@ export const BookingSection = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    try {
-      const selectedPkg = PACKAGES.find(p => p.value === formData.package);
-      const bookingId = generateBookingId(formData.package);
+    const selectedPkg = PACKAGES.find(p => p.value === formData.package);
+    const bookingId = generateBookingId(formData.package);
 
-      // 1. Generate PDF (local — never fails)
-      const pdfBlob = generateBookingPDF(formData);
+    // --- Step 1: WhatsApp (always runs, never blocked) ---
+    const adminPhoneNumber = "6285697229466";
+    const packageLabel = selectedPkg
+      ? `${selectedPkg.group} — ${selectedPkg.label} (${selectedPkg.price})`
+      : 'Custom Request';
 
-      // 2. Try to upload PDF + save to Sanity — non-blocking, failures are silent
-      let pdfUrl = '';
+    const message = `*NEW BOOKING RESERVATION - 3NT STUDIO*
+----------------------------------------
+*Booking ID:* ${bookingId}
+*Name:* ${formData.name}
+*Phone:* ${formData.phone}
+*Address:* ${formData.address || '-'}
+*Date:* ${formData.date}
+*Package:* ${packageLabel}
+----------------------------------------
+*Notes:* 
+${formData.notes || '-'}
+----------------------------------------
+Sent from 3ntstudio.com`;
+
+    window.open(`https://wa.me/${adminPhoneNumber}?text=${encodeURIComponent(message)}`, '_blank');
+    showToast(t('booking_success'), 'success');
+    setFormData({ name: '', phone: '', address: '', date: '', package: '', notes: '' });
+    setIsSubmitting(false);
+
+    // --- Step 2: PDF + Sanity (fire-and-forget, fully isolated) ---
+    (async () => {
       try {
+        const pdfBlob = generateBookingPDF(formData);
         const fileName = `booking_${Date.now()}_${formData.name.replace(/\s+/g, '_')}.pdf`;
-        pdfUrl = await uploadBookingPDFToSanity(pdfBlob, fileName);
+        const pdfUrl = await uploadBookingPDFToSanity(pdfBlob, fileName);
 
         const priceNumeric = selectedPkg?.price
           ? parseInt(selectedPkg.price.replace(/[^0-9]/g, ''), 10) || 0
@@ -273,44 +295,10 @@ export const BookingSection = () => {
           status: 'pending',
           createdAt: new Date().toISOString(),
         });
-      } catch (sanityError) {
-        // Log but don't block the user — WhatsApp message still goes through
-        console.warn('Sanity save failed (non-critical):', sanityError);
+      } catch (err) {
+        console.warn('[Booking] Sanity/PDF save skipped:', err);
       }
-
-      // 3. Build & open WhatsApp message — always runs
-      const adminPhoneNumber = "6285697229466";
-      const packageLabel = selectedPkg
-        ? `${selectedPkg.group} — ${selectedPkg.label} (${selectedPkg.price})`
-        : 'Custom Request';
-
-      const pdfLine = pdfUrl ? `\n*Booking PDF:* ${pdfUrl}\n----------------------------------------` : '';
-
-      const message = `*NEW BOOKING RESERVATION - 3NT STUDIO*
-----------------------------------------
-*Booking ID:* ${bookingId}
-*Name:* ${formData.name}
-*Phone:* ${formData.phone}
-*Address:* ${formData.address || '-'}
-*Date:* ${formData.date}
-*Package:* ${packageLabel}
-----------------------------------------${pdfLine}
-*Notes:* 
-${formData.notes || '-'}
-----------------------------------------
-Sent from 3ntstudio.com`;
-
-      const whatsappUrl = `https://wa.me/${adminPhoneNumber}?text=${encodeURIComponent(message)}`;
-      window.open(whatsappUrl, '_blank');
-
-      showToast(t('booking_success'), 'success');
-      setFormData({ name: '', phone: '', address: '', date: '', package: '', notes: '' });
-    } catch (error) {
-      console.error('Error submitting booking:', error);
-      showToast(t('booking_error'), 'error');
-    } finally {
-      setIsSubmitting(false);
-    }
+    })();
   };
 
   return (
