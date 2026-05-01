@@ -50,20 +50,25 @@ function AppContent() {
         <Routes>
           {isVercelAdmin ? (
             // ── VERCEL ADMIN DOMAIN ──────────────────────────────────────
-            <Route
-              path="/*"
-              element={
-                <DashboardThemeProvider>
-                  <DashboardWrapper>
-                    <SidebarProvider>
-                      <Suspense fallback={<div>Loading Dashboard...</div>}>
-                        <AdminDashboard />
-                      </Suspense>
-                    </SidebarProvider>
-                  </DashboardWrapper>
-                </DashboardThemeProvider>
-              }
-            />
+            // Mount at /admin/* so dashboard's relative routes (signin, etc.) resolve correctly
+            <>
+              <Route
+                path="/admin/*"
+                element={
+                  <DashboardThemeProvider>
+                    <DashboardWrapper>
+                      <SidebarProvider>
+                        <Suspense fallback={<div>Loading Dashboard...</div>}>
+                          <AdminDashboard />
+                        </Suspense>
+                      </SidebarProvider>
+                    </DashboardWrapper>
+                  </DashboardThemeProvider>
+                }
+              />
+              {/* Redirect root to /admin */}
+              <Route path="*" element={<Navigate to="/admin" replace />} />
+            </>
           ) : (
             // ── MAIN DOMAIN (LOCALHOST OR PRODUCTION) ───────────────────
             <>
