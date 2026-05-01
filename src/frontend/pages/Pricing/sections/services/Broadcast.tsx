@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import broadcastImage from '../../../../assets/Photo/services-assets/streaming-equipement.webp';
 import {
@@ -5,6 +6,15 @@ import {
   broadcastPackages,
   type PriceItem,
 } from '../pricingData';
+import { BookingModal, type BookingPackageOption } from '../../../../components/BookingModal';
+
+const BROADCAST_PACKAGES: BookingPackageOption[] = [
+  { group: 'Broadcast & Streaming', value: 'stream_vmix', label: 'VMIX + VJ', price: 'Rp 2.500.000' },
+  { group: 'Broadcast & Streaming', value: 'stream_resolume', label: 'Resolume + VJ', price: 'Rp 3.500.000' },
+  { group: 'Broadcast & Streaming', value: 'stream_hybrid', label: 'Hybrid System', price: 'Rp 8.500.000' },
+  { group: 'Broadcast & Streaming', value: 'stream_social', label: 'Social Media Stream', price: 'Rp 5.500.000' },
+  { group: 'Custom Production', value: 'custom', label: 'Custom / Konsultasi', price: 'Hubungi Kami' },
+];
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 24 },
@@ -12,8 +22,16 @@ const fadeInUp = {
 };
 
 const BroadcastServicePage = () => {
+  const [modalOpen, setModalOpen] = useState(false);
+
   return (
     <div className="bg-pure-white text-primary-black">
+      <BookingModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        packages={BROADCAST_PACKAGES}
+        serviceTitle="Broadcast & Streaming"
+      />
       <section className="pt-36 pb-16 lg:pt-44 lg:pb-24 border-b border-border-gray">
         <div className="container-custom grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           <motion.div
@@ -81,7 +99,9 @@ const BroadcastServicePage = () => {
             Ready to Book Broadcast Services?
           </h2>
           <div className="flex flex-wrap justify-center gap-4">
-            <button className="bg-primary-black text-pure-white px-8 py-4 rounded-full text-xs uppercase tracking-[0.2em] font-bold hover:scale-[1.02] transition-transform">
+            <button
+              onClick={() => setModalOpen(true)}
+              className="bg-primary-black text-pure-white px-8 py-4 rounded-full text-xs uppercase tracking-[0.2em] font-bold hover:scale-[1.02] transition-transform">
               Book Now
             </button>
             <button className="border border-primary-black text-primary-black px-8 py-4 rounded-full text-xs uppercase tracking-[0.2em] font-bold hover:bg-primary-black hover:text-pure-white transition-all">

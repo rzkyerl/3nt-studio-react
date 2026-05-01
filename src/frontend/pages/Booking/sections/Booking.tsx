@@ -1,6 +1,7 @@
-import { useState, type FormEvent } from 'react';
+import { useState, useEffect, type FormEvent } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MapPin, Phone, Mail, Clock, Loader2, CheckCircle2, XCircle } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
 import { generateBookingPDF } from '../../../utils/pdfGenerator';
 import { uploadBookingPDFToSanity } from '../../../utils/sanityStorage';
 import { client } from '../../../../backend/sanity/client';
@@ -159,6 +160,9 @@ const PACKAGES = [
   { group: 'Broadcast & Streaming', value: 'stream_resolume', label: 'Resolume + VJ', price: 'Rp 3.500.000' },
   { group: 'Broadcast & Streaming', value: 'stream_hybrid', label: 'Hybrid System', price: 'Rp 8.500.000' },
   { group: 'Broadcast & Streaming', value: 'stream_social', label: 'Social Media Stream', price: 'Rp 5.500.000' },
+  // Teleprompter
+  { group: 'Teleprompter', value: 'teleprompter_6h', label: 'Teleprompter 6 Jam', price: 'Rp 1.500.000' },
+  { group: 'Teleprompter', value: 'teleprompter_1d', label: 'Teleprompter 1 Hari', price: 'Rp 2.500.000' },
   // Custom
   { group: 'Custom Production', value: 'custom', label: 'Custom / Konsultasi', price: 'Hubungi Kami' },
 ];
@@ -189,6 +193,8 @@ const PACKAGE_CODE: Record<string, string> = {
   stream_resolume:          'STRSM',
   stream_hybrid:            'STHYB',
   stream_social:            'STSOC',
+  teleprompter_6h:          'TPMT6',
+  teleprompter_1d:          'TPMT1',
   custom:                   'CSTM',
 };
 
@@ -202,6 +208,7 @@ export const BookingSection = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null);
   const { t } = useLanguage();
+  const [searchParams] = useSearchParams();
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -210,6 +217,18 @@ export const BookingSection = () => {
     package: '',
     notes: ''
   });
+
+  // Pre-fill package from URL query param (e.g. /booking?package=photobooth_unlimited_2h)
+  useEffect(() => {
+    const pkgParam = searchParams.get('package');
+    if (pkgParam && PACKAGES.some((p) => p.value === pkgParam)) {
+      setFormData((prev) => ({ ...prev, package: pkgParam }));
+      // Scroll to booking form smoothly
+      setTimeout(() => {
+        document.getElementById('booking-section')?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+  }, [searchParams]);
 
   const showToast = (message: string, type: ToastType) => {
     setToast({ message, type });

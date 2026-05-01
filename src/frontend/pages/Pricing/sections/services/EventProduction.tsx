@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import multicamImage from '../../../../assets/Photo/mldspot/6.webp';
 import {
@@ -10,6 +11,18 @@ import {
   multicamNX5REquipment,
   type PriceItem,
 } from '../pricingData';
+import { BookingModal, type BookingPackageOption } from '../../../../components/BookingModal';
+
+const MULTICAM_PACKAGES: BookingPackageOption[] = [
+  { group: 'Multicam — FX6 Cinema 4K', value: 'multicam_fx6_1cam', label: '1 Camera', price: 'Rp 5.000.000' },
+  { group: 'Multicam — FX6 Cinema 4K', value: 'multicam_fx6_2cam', label: '2 Camera', price: 'Rp 10.000.000' },
+  { group: 'Multicam — FX6 Cinema 4K', value: 'multicam_fx6_3cam', label: '3 Camera', price: 'Rp 15.000.000' },
+  { group: 'Multicam — Sony Z190', value: 'multicam_z190_1cam', label: '1 Camera', price: 'Rp 3.500.000' },
+  { group: 'Multicam — Sony Z190', value: 'multicam_z190_2cam', label: '2 Camera', price: 'Rp 6.500.000' },
+  { group: 'Multicam — Sony NX5R', value: 'multicam_nx5r_1cam', label: '1 Camera', price: 'Rp 3.500.000' },
+  { group: 'Multicam — Sony NX5R', value: 'multicam_nx5r_2cam', label: '2 Camera', price: 'Rp 6.500.000' },
+  { group: 'Custom Production', value: 'custom', label: 'Custom / Konsultasi', price: 'Hubungi Kami' },
+];
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 24 },
@@ -49,8 +62,16 @@ const EquipmentList = ({ items }: { items: string[] }) => (
 );
 
 const MulticamServicePage = () => {
+  const [modalOpen, setModalOpen] = useState(false);
+
   return (
     <div className="bg-pure-white text-primary-black">
+      <BookingModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        packages={MULTICAM_PACKAGES}
+        serviceTitle="Event Production"
+      />
       <section className="pt-36 pb-16 lg:pt-44 lg:pb-24 border-b border-border-gray">
         <div className="container-custom grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           <motion.div
@@ -117,7 +138,9 @@ const MulticamServicePage = () => {
             Ready to Book Multicamera Production?
           </h2>
           <div className="flex flex-wrap justify-center gap-4">
-            <button className="bg-primary-black text-pure-white px-8 py-4 rounded-full text-xs uppercase tracking-[0.2em] font-bold hover:scale-[1.02] transition-transform">
+            <button
+              onClick={() => setModalOpen(true)}
+              className="bg-primary-black text-pure-white px-8 py-4 rounded-full text-xs uppercase tracking-[0.2em] font-bold hover:scale-[1.02] transition-transform">
               Book Now
             </button>
             <button className="border border-primary-black text-primary-black px-8 py-4 rounded-full text-xs uppercase tracking-[0.2em] font-bold hover:bg-primary-black hover:text-pure-white transition-all">

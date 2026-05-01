@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import photoboothImage from '../../../../assets/Photo/services-assets/photobooth.webp';
 import {
@@ -18,6 +19,19 @@ import {
   type IncludeGroup,
   type AddOnItem,
 } from '../pricingData';
+import { BookingModal, type BookingPackageOption } from '../../../../components/BookingModal';
+
+const PHOTOBOOTH_PACKAGES: BookingPackageOption[] = [
+  // Classic Unlimited
+  { group: 'Classic Photobooth — Unlimited', value: 'photobooth_unlimited_2h', label: '2 Hours', price: 'Rp 3.500.000' },
+  { group: 'Classic Photobooth — Unlimited', value: 'photobooth_unlimited_3h', label: '3 Hours', price: 'Rp 4.500.000' },
+  { group: 'Classic Photobooth — Unlimited', value: 'photobooth_unlimited_4h', label: '4 Hours', price: 'Rp 5.500.000' },
+  // Classic Limited
+  { group: 'Classic Photobooth — Limited Print', value: 'photobooth_limited_100', label: '100 Prints', price: 'Rp 3.300.000' },
+  { group: 'Classic Photobooth — Limited Print', value: 'photobooth_limited_200', label: '200 Prints', price: 'Rp 3.800.000' },
+  // Custom
+  { group: 'Custom Production', value: 'custom', label: 'Custom / Konsultasi', price: 'Hubungi Kami' },
+];
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 24 },
@@ -80,8 +94,16 @@ const AddOnList = ({ items }: { items: AddOnItem[] }) => (
 );
 
 const PhotoboothServicePage = () => {
+  const [modalOpen, setModalOpen] = useState(false);
+
   return (
     <div className="bg-pure-white text-primary-black">
+      <BookingModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        packages={PHOTOBOOTH_PACKAGES}
+        serviceTitle="Photobooth"
+      />
       <motion.section
         initial="hidden"
         animate="visible"
@@ -113,7 +135,9 @@ const PhotoboothServicePage = () => {
             </div>
 
             <div className="flex flex-wrap gap-4 pt-2">
-              <button className="bg-primary-black text-pure-white px-8 py-4 rounded-full text-xs uppercase tracking-[0.2em] font-bold hover:scale-[1.02] transition-transform">
+              <button
+                onClick={() => setModalOpen(true)}
+                className="bg-primary-black text-pure-white px-8 py-4 rounded-full text-xs uppercase tracking-[0.2em] font-bold hover:scale-[1.02] transition-transform">
                 Book Now
               </button>
               <button className="border border-primary-black text-primary-black px-8 py-4 rounded-full text-xs uppercase tracking-[0.2em] font-bold hover:bg-primary-black hover:text-pure-white transition-all">
@@ -258,7 +282,9 @@ const PhotoboothServicePage = () => {
             Ready to Book Photobooth Services?
           </h2>
           <div className="flex flex-wrap justify-center gap-4">
-            <button className="bg-primary-black text-pure-white px-8 py-4 rounded-full text-xs uppercase tracking-[0.2em] font-bold hover:scale-[1.02] transition-transform">
+            <button
+              onClick={() => setModalOpen(true)}
+              className="bg-primary-black text-pure-white px-8 py-4 rounded-full text-xs uppercase tracking-[0.2em] font-bold hover:scale-[1.02] transition-transform">
               Book Now
             </button>
             <button className="border border-primary-black text-primary-black px-8 py-4 rounded-full text-xs uppercase tracking-[0.2em] font-bold hover:bg-primary-black hover:text-pure-white transition-all">
