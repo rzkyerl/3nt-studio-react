@@ -47,7 +47,7 @@ const Calendar: React.FC = () => {
     // Fetch bookings from Sanity and merge with default events
     const fetchBookings = async () => {
       try {
-        const query = `*[_type == "booking"] { _id, bookingId, name, phone, address, date, package }`;
+        const query = `*[_type == "booking"] { _id, bookingId, name, phone, address, date, package, packageLabel }`;
         const bookings = await client.fetch(query);
 
         const bookingEvents: CalendarEvent[] = bookings
@@ -63,7 +63,7 @@ const Calendar: React.FC = () => {
               bookingId: b.bookingId ?? `LEGACY-${b._id.slice(-6).toUpperCase()}`,
               phone: b.phone,
               address: b.address,
-              package: b.package,
+              package: b.packageLabel || b.package,
             },
           }));
 
