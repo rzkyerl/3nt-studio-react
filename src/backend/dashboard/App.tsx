@@ -19,6 +19,7 @@ import PortfolioList from "./pages/Portfolio/PortfolioList";
 import PortfolioForm from "./pages/Portfolio/PortfolioForm";
 import PricingList from "./pages/Pricing/PricingList";
 import PricingForm from "./pages/Pricing/PricingForm";
+import EditProfile from "./pages/Profile/EditProfile";
 
 // Import Dashboard Styles
 import "./index.css";
@@ -63,6 +64,9 @@ export default function App() {
         <Route path="pages/pricing" element={<PricingList />} />
         <Route path="pages/pricing/create" element={<PricingForm />} />
         <Route path="pages/pricing/edit/:id" element={<PricingForm />} />
+
+        {/* Profile */}
+        <Route path="profile" element={<EditProfile />} />
       </Route>
 
       {/* Auth Layout */}
