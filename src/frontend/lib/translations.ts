@@ -88,7 +88,9 @@ export const translations: Record<string, Record<string, string>> = {
     booking_guide_step3_title: 'Verify Captcha',
     booking_guide_step3_desc: 'Check "I\'m not a robot" before submitting.',
     booking_guide_step4_title: 'Submit & Wait for Confirmation',
-    booking_guide_step4_desc: 'After submitting, admin will contact you via WhatsApp or Email for confirmation.',
+    booking_guide_step4_desc: 'After submitting, admin will contact you via WhatsApp for confirmation.',
+    booking_captcha_required: 'Please verify that you are not a robot first.',
+    booking_general_error: 'An error occurred, please try again.',
 
     // ─── Pricing / Services Page ──────────────────────────────
     pricing_hero_subtitle: 'Production for Wedding, Corporate, Concert & Live Streaming',
@@ -208,7 +210,9 @@ export const translations: Record<string, Record<string, string>> = {
     booking_guide_step3_title: 'Verifikasi Captcha',
     booking_guide_step3_desc: 'Centang "I\'m not a robot" sebelum submit.',
     booking_guide_step4_title: 'Kirim & Tunggu Konfirmasi',
-    booking_guide_step4_desc: 'Setelah submit, admin akan menghubungi Anda via WhatsApp atau Email untuk konfirmasi.',
+    booking_guide_step4_desc: 'Setelah submit, admin akan menghubungi Anda via WhatsApp untuk konfirmasi.',
+    booking_captcha_required: 'Silakan verifikasi bahwa Anda bukan robot terlebih dahulu.',
+    booking_general_error: 'Terjadi kesalahan, silakan coba lagi.',
 
     // ─── Pricing / Services Page ──────────────────────────────
     pricing_hero_subtitle: 'Produksi untuk Pernikahan, Korporat, Konser & Live Streaming',

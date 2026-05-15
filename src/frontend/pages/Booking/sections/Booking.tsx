@@ -245,7 +245,7 @@ export const BookingSection = () => {
     e.preventDefault();
 
     if (!isDev && !recaptchaToken) {
-      showToast('Silakan verifikasi bahwa Anda bukan robot terlebih dahulu', 'error');
+      showToast(t('booking_captcha_required'), 'error');
       return;
     }
 
@@ -315,7 +315,7 @@ Sent from 3ntstudio.com`;
       })();
     } catch (error) {
       console.error('[Booking] error:', error);
-      showToast('Terjadi kesalahan, silakan coba lagi', 'error');
+      showToast(t('booking_general_error'), 'error');
       setRecaptchaToken(null);
       setIsSubmitting(false);
     }
