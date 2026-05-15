@@ -2,6 +2,7 @@ import { useState, useEffect, type FormEvent } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MapPin, Phone, Mail, Clock, Loader2, CheckCircle2, XCircle } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
+import ReCAPTCHA from 'react-google-recaptcha';
 import { generateBookingPDF } from '../../../utils/pdfGenerator';
 import { uploadBookingPDFToSanity } from '../../../utils/sanityStorage';
 import { client } from '../../../../backend/sanity/client';
@@ -19,11 +20,11 @@ interface ToastProps {
 const Toast = ({ message, type, onClose }: ToastProps) => {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 40, scale: 0.95 }}
+      initial={{ opacity: 0, y: -40, scale: 0.95 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: 20, scale: 0.95 }}
+      exit={{ opacity: 0, y: -20, scale: 0.95 }}
       transition={{ duration: 0.35, ease: 'easeOut' }}
-      className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[9999] flex items-center gap-4 px-6 py-4 shadow-2xl min-w-[300px] max-w-sm"
+      className="fixed top-8 left-1/2 -translate-x-1/2 z-[9999] flex items-center gap-4 px-6 py-4 shadow-2xl min-w-[300px] max-w-sm"
       style={{ background: type === 'success' ? '#111' : '#fff', color: type === 'success' ? '#fff' : '#111', border: type === 'error' ? '1px solid #111' : 'none' }}
     >
       {type === 'success'
@@ -208,6 +209,7 @@ export const BookingSection = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null);
   const { t } = useLanguage();
+  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
   const [searchParams] = useSearchParams();
   const [formData, setFormData] = useState({
     name: '',
@@ -232,25 +234,34 @@ export const BookingSection = () => {
 
   const showToast = (message: string, type: ToastType) => {
     setToast({ message, type });
-    setTimeout(() => setToast(null), 4000);
+    setTimeout(() => setToast(null), 8000);
   };
 
   const selectedPackage = PACKAGES.find(p => p.value === formData.package);
 
+  const isDev = import.meta.env.DEV;
+  
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!isDev && !recaptchaToken) {
+      showToast('Silakan verifikasi bahwa Anda bukan robot terlebih dahulu', 'error');
+      return;
+    }
+
     setIsSubmitting(true);
 
-    const selectedPkg = PACKAGES.find(p => p.value === formData.package);
-    const bookingId = generateBookingId(formData.package);
+    try {
+      const selectedPkg = PACKAGES.find(p => p.value === formData.package);
+      const bookingId = generateBookingId(formData.package);
 
-    // --- Step 1: WhatsApp (always runs, never blocked) ---
-    const adminPhoneNumber = "6285697229466";
-    const packageLabel = selectedPkg
-      ? `${selectedPkg.group} — ${selectedPkg.label} (${selectedPkg.price})`
-      : 'Custom Request';
+      // --- Step 1: WhatsApp (always runs, never blocked) ---
+      const adminPhoneNumber = "6285697229466";
+      const packageLabel = selectedPkg
+        ? `${selectedPkg.group} — ${selectedPkg.label} (${selectedPkg.price})`
+        : 'Custom Request';
 
-    const message = `*NEW BOOKING RESERVATION - 3NT STUDIO*
+      const message = `*NEW BOOKING RESERVATION - 3NT STUDIO*
 ----------------------------------------
 *Booking ID:* ${bookingId}
 *Name:* ${formData.name}
@@ -258,47 +269,56 @@ export const BookingSection = () => {
 *Address:* ${formData.address || '-'}
 *Date:* ${formData.date}
 *Package:* ${packageLabel}
+${recaptchaToken ? `*reCAPTCHA Token:* ${recaptchaToken.substring(0, 20)}...` : ''}
 ----------------------------------------
 *Notes:* 
 ${formData.notes || '-'}
 ----------------------------------------
 Sent from 3ntstudio.com`;
 
-    window.open(`https://wa.me/${adminPhoneNumber}?text=${encodeURIComponent(message)}`, '_blank');
-    showToast(t('booking_success'), 'success');
-    setFormData({ name: '', phone: '', address: '', date: '', package: '', notes: '' });
-    setIsSubmitting(false);
+      window.open(`https://wa.me/${adminPhoneNumber}?text=${encodeURIComponent(message)}`, '_blank');
+      showToast(t('booking_success'), 'success');
+      setFormData({ name: '', phone: '', address: '', date: '', package: '', notes: '' });
+      setRecaptchaToken(null);
+      setIsSubmitting(false);
 
-    // --- Step 2: PDF + Sanity (fire-and-forget, fully isolated) ---
-    (async () => {
-      try {
-        const pdfBlob = generateBookingPDF(formData);
-        const fileName = `booking_${Date.now()}_${formData.name.replace(/\s+/g, '_')}.pdf`;
-        const pdfUrl = await uploadBookingPDFToSanity(pdfBlob, fileName);
+      // --- Step 2: PDF + Sanity (fire-and-forget, fully isolated) ---
+      (async () => {
+        try {
+          const pdfBlob = generateBookingPDF(formData);
+          const fileName = `booking_${Date.now()}_${formData.name.replace(/\s+/g, '_')}.pdf`;
+          const pdfUrl = await uploadBookingPDFToSanity(pdfBlob, fileName);
 
-        const priceNumeric = selectedPkg?.price
-          ? parseInt(selectedPkg.price.replace(/[^0-9]/g, ''), 10) || 0
-          : 0;
+          const priceNumeric = selectedPkg?.price
+            ? parseInt(selectedPkg.price.replace(/[^0-9]/g, ''), 10) || 0
+            : 0;
 
-        await client.create({
-          _type: 'booking',
-          bookingId,
-          name: formData.name,
-          phone: formData.phone,
-          address: formData.address,
-          date: formData.date,
-          package: formData.package,
-          packageLabel: selectedPkg ? `${selectedPkg.group} — ${selectedPkg.label}` : formData.package,
-          price: priceNumeric,
-          notes: formData.notes,
-          pdfUrl,
-          status: 'pending',
-          createdAt: new Date().toISOString(),
-        });
-      } catch (err) {
-        console.warn('[Booking] Sanity/PDF save skipped:', err);
-      }
-    })();
+          await client.create({
+            _type: 'booking',
+            bookingId,
+            name: formData.name,
+            phone: formData.phone,
+            address: formData.address,
+            date: formData.date,
+            package: formData.package,
+            packageLabel: selectedPkg ? `${selectedPkg.group} — ${selectedPkg.label}` : formData.package,
+            price: priceNumeric,
+            notes: formData.notes,
+            pdfUrl,
+            recaptchaToken,
+            status: 'pending',
+            createdAt: new Date().toISOString(),
+          });
+        } catch (err) {
+          console.warn('[Booking] Sanity/PDF save skipped:', err);
+        }
+      })();
+    } catch (error) {
+      console.error('[Booking] error:', error);
+      showToast('Terjadi kesalahan, silakan coba lagi', 'error');
+      setRecaptchaToken(null);
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -366,6 +386,7 @@ Sent from 3ntstudio.com`;
                 <label className="text-[10px] uppercase tracking-[0.4em] font-bold text-medium-gray">{t('booking_preferred_date')}</label>
                 <input 
                   type="date" 
+                  min={new Date().toISOString().split('T')[0]}
                   className="w-full bg-transparent border-b border-border-gray py-3 px-1 focus:outline-none focus:border-primary-black transition-colors duration-300 text-primary-black font-body text-sm"
                   value={formData.date}
                   onChange={(e) => setFormData({...formData, date: e.target.value})}
@@ -428,6 +449,18 @@ Sent from 3ntstudio.com`;
                 />
               </div>
 
+              {!isDev && (
+                <div className="flex justify-center pt-4">
+                  <ReCAPTCHA
+                    sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+                    size="normal"
+                    theme="light"
+                    onChange={(token: string | null) => setRecaptchaToken(token)}
+                    onExpired={() => setRecaptchaToken(null)}
+                  />
+                </div>
+              )}
+
               <div className="pt-4">
                 <button 
                   type="submit" 
@@ -445,6 +478,59 @@ Sent from 3ntstudio.com`;
                 </button>
               </div>
             </form>
+
+            {/* User Guide */}
+            <div className="mt-10 pt-8 border-t border-border-gray">
+              <h4 className="text-sm uppercase tracking-widest font-bold text-primary-black mb-6 text-center">
+                {t('booking_guide_title')}
+              </h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="flex gap-4 items-start">
+                  <div className="w-8 h-8 flex items-center justify-center bg-primary-black text-pure-white text-sm font-bold shrink-0">
+                    1
+                  </div>
+                  <div>
+                    <h5 className="font-bold text-primary-black mb-1">{t('booking_guide_step1_title')}</h5>
+                    <p className="text-sm text-medium-gray leading-relaxed">
+                      {t('booking_guide_step1_desc')}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-4 items-start">
+                  <div className="w-8 h-8 flex items-center justify-center bg-primary-black text-pure-white text-sm font-bold shrink-0">
+                    2
+                  </div>
+                  <div>
+                    <h5 className="font-bold text-primary-black mb-1">{t('booking_guide_step2_title')}</h5>
+                    <p className="text-sm text-medium-gray leading-relaxed">
+                      {t('booking_guide_step2_desc')}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-4 items-start">
+                  <div className="w-8 h-8 flex items-center justify-center bg-primary-black text-pure-white text-sm font-bold shrink-0">
+                    3
+                  </div>
+                  <div>
+                    <h5 className="font-bold text-primary-black mb-1">{t('booking_guide_step3_title')}</h5>
+                    <p className="text-sm text-medium-gray leading-relaxed">
+                      {t('booking_guide_step3_desc')}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-4 items-start">
+                  <div className="w-8 h-8 flex items-center justify-center bg-primary-black text-pure-white text-sm font-bold shrink-0">
+                    4
+                  </div>
+                  <div>
+                    <h5 className="font-bold text-primary-black mb-1">{t('booking_guide_step4_title')}</h5>
+                    <p className="text-sm text-medium-gray leading-relaxed">
+                      {t('booking_guide_step4_desc')}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              </div>
           </motion.div>
         </div>
       </div>

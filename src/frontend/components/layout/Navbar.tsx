@@ -21,7 +21,6 @@ export const Navbar = () => {
     { nameKey: 'nav_portfolio', href: '/portfolio' },
     { nameKey: 'nav_services', href: '/pricing' },
     { nameKey: 'nav_location', href: '/location' },
-    { nameKey: 'nav_booking', href: '/booking' },
     { nameKey: 'nav_photobooth', href: '/photobooth' },
   ];
 
@@ -48,9 +47,9 @@ export const Navbar = () => {
           : 'bg-transparent py-6'
       )}
     >
-      <div className="container-custom flex justify-between items-center relative z-50">
+      <div className="container-custom flex items-center relative z-50">
         {/* Logo */}
-        <Link to="/" onClick={() => setIsMobileMenuOpen(false)}>
+        <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="absolute left-0">
           <img 
             src={(navStyle === 'scrolled' || isMobileMenuOpen) ? logoBlack : logoWhite} 
             alt="3NT STUDIO" 
@@ -59,7 +58,7 @@ export const Navbar = () => {
         </Link>
 
         {/* Desktop Menu */}
-        <div className="hidden md:flex items-center gap-10">
+        <div className="hidden md:flex items-center justify-center flex-1 gap-10">
           {navLinks.map((link) => (
             <NavLink
               key={link.nameKey}
@@ -73,9 +72,10 @@ export const Navbar = () => {
               {t(link.nameKey)}
             </NavLink>
           ))}
+        </div>
 
-
-
+        {/* Book Now Button */}
+        <div className="hidden md:block absolute right-0">
           <Link to="/booking">
             <button className={cn(
               'px-6 py-2 border transition-all duration-300 uppercase tracking-widest text-xs font-semibold cursor-pointer',

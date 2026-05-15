@@ -80,6 +80,15 @@ export const translations: Record<string, Record<string, string>> = {
     booking_reserve_btn: 'Reserve Now',
     booking_success: 'Booking successful! Redirecting to WhatsApp to complete your reservation...',
     booking_error: 'There was an error processing your booking. Please try again.',
+    booking_guide_title: 'Booking Guide',
+    booking_guide_step1_title: 'Fill All Data',
+    booking_guide_step1_desc: 'Make sure all fields are filled completely and correctly.',
+    booking_guide_step2_title: 'Active WhatsApp Number',
+    booking_guide_step2_desc: 'Use an active WhatsApp number so admin can contact you.',
+    booking_guide_step3_title: 'Verify Captcha',
+    booking_guide_step3_desc: 'Check "I\'m not a robot" before submitting.',
+    booking_guide_step4_title: 'Submit & Wait for Confirmation',
+    booking_guide_step4_desc: 'After submitting, admin will contact you via WhatsApp or Email for confirmation.',
 
     // ─── Pricing / Services Page ──────────────────────────────
     pricing_hero_subtitle: 'Production for Wedding, Corporate, Concert & Live Streaming',
@@ -191,6 +200,15 @@ export const translations: Record<string, Record<string, string>> = {
     booking_reserve_btn: 'Reservasi Sekarang',
     booking_success: 'Pemesanan berhasil! Mengalihkan ke WhatsApp untuk melengkapi reservasi Anda...',
     booking_error: 'Terjadi kesalahan saat memproses pemesanan Anda. Silakan coba lagi.',
+    booking_guide_title: 'Panduan Booking',
+    booking_guide_step1_title: 'Isi Semua Data',
+    booking_guide_step1_desc: 'Pastikan semua kolom terisi dengan lengkap dan benar.',
+    booking_guide_step2_title: 'Nomor WhatsApp Aktif',
+    booking_guide_step2_desc: 'Gunakan nomor WhatsApp yang aktif agar admin dapat menghubungi Anda.',
+    booking_guide_step3_title: 'Verifikasi Captcha',
+    booking_guide_step3_desc: 'Centang "I\'m not a robot" sebelum submit.',
+    booking_guide_step4_title: 'Kirim & Tunggu Konfirmasi',
+    booking_guide_step4_desc: 'Setelah submit, admin akan menghubungi Anda via WhatsApp atau Email untuk konfirmasi.',
 
     // ─── Pricing / Services Page ──────────────────────────────
     pricing_hero_subtitle: 'Produksi untuk Pernikahan, Korporat, Konser & Live Streaming',
