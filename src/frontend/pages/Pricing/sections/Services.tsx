@@ -66,7 +66,7 @@ const HeroSection = () => {
                 3NT Studio <br />
                 <span className="italic font-light text-medium-gray">Production Services</span>
               </h1>
-              <img src={logo3nt} className="w-20 h-20 md:w-24 md:h-24 object-contain shrink-0 lg:hidden" alt="3NT Studio Logo" />
+
             </div>
             <p className="text-xl md:text-2xl text-medium-gray font-light max-w-xl leading-relaxed">
               {t('pricing_hero_subtitle')}

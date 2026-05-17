@@ -3,8 +3,8 @@
 @plugin "@tailwindcss/typography";
 
 @theme {
-  --font-heading: "Playfair Display", serif;
-  --font-body: "Inter", sans-serif;
+  --font-heading: "Arial", sans-serif;
+  --font-body: "Arial", sans-serif;
 
   --color-primary-black: #0A0A0A;
   --color-pure-white: #FFFFFF;

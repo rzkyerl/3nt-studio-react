@@ -64,7 +64,7 @@ export const Navbar = () => {
               key={link.nameKey}
               to={link.href}
               className={({ isActive }) => cn(
-                'text-sm uppercase tracking-widest font-medium transition-colors duration-300 hover:text-medium-gray',
+                'text-sm uppercase tracking-widest font-bold transition-colors duration-300 hover:text-medium-gray',
                 navStyle === 'scrolled' ? 'text-primary-black' : 'text-pure-white',
                 isActive && (navStyle === 'scrolled' ? 'border-b border-primary-black' : 'border-b border-pure-white')
               )}

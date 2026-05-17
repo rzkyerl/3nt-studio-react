@@ -208,6 +208,7 @@ const generateBookingId = (packageValue: string): string => {
 export const BookingSection = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null);
+  const [showConfirmation, setShowConfirmation] = useState(false);
   const { t } = useLanguage();
   const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
   const [searchParams] = useSearchParams();
@@ -241,14 +242,7 @@ export const BookingSection = () => {
 
   const isDev = import.meta.env.DEV;
   
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (!isDev && !recaptchaToken) {
-      showToast(t('booking_captcha_required'), 'error');
-      return;
-    }
-
+  const submitBooking = async () => {
     setIsSubmitting(true);
 
     try {
@@ -281,6 +275,7 @@ Sent from 3ntstudio.com`;
       setFormData({ name: '', phone: '', address: '', date: '', package: '', notes: '' });
       setRecaptchaToken(null);
       setIsSubmitting(false);
+      setShowConfirmation(false);
 
       // --- Step 2: PDF + Sanity (fire-and-forget, fully isolated) ---
       (async () => {
@@ -318,7 +313,19 @@ Sent from 3ntstudio.com`;
       showToast(t('booking_general_error'), 'error');
       setRecaptchaToken(null);
       setIsSubmitting(false);
+      setShowConfirmation(false);
     }
+  };
+
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!isDev && !recaptchaToken) {
+      showToast(t('booking_captcha_required'), 'error');
+      return;
+    }
+
+    setShowConfirmation(true);
   };
 
   return (
@@ -330,6 +337,83 @@ Sent from 3ntstudio.com`;
             type={toast.type}
             onClose={() => setToast(null)}
           />
+        )}
+        {/* Confirmation Modal */}
+        {showConfirmation && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9998] flex items-center justify-center p-6"
+            onClick={() => setShowConfirmation(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="bg-pure-white max-w-lg w-full rounded-2xl shadow-2xl overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="p-8 space-y-6">
+                <div className="text-center space-y-2">
+                  <h3 className="text-2xl font-heading font-bold uppercase tracking-tight">{t('booking_confirm_title')}</h3>
+                  <p className="text-medium-gray text-sm">{t('booking_confirm_subtitle')}</p>
+                </div>
+                <div className="space-y-4 bg-light-gray p-6 rounded-xl">
+                  <div className="flex justify-between items-start gap-4">
+                    <span className="text-[10px] uppercase tracking-[0.3em] font-bold text-medium-gray shrink-0">{t('booking_confirm_name')}</span>
+                    <span className="text-sm font-bold text-primary-black text-right">{formData.name}</span>
+                  </div>
+                  <div className="flex justify-between items-start gap-4">
+                    <span className="text-[10px] uppercase tracking-[0.3em] font-bold text-medium-gray shrink-0">{t('booking_confirm_phone')}</span>
+                    <span className="text-sm font-bold text-primary-black text-right">{formData.phone}</span>
+                  </div>
+                  <div className="flex justify-between items-start gap-4">
+                    <span className="text-[10px] uppercase tracking-[0.3em] font-bold text-medium-gray shrink-0">{t('booking_confirm_address')}</span>
+                    <span className="text-sm font-bold text-primary-black text-right">{formData.address || '-'}</span>
+                  </div>
+                  <div className="flex justify-between items-start gap-4">
+                    <span className="text-[10px] uppercase tracking-[0.3em] font-bold text-medium-gray shrink-0">{t('booking_confirm_date')}</span>
+                    <span className="text-sm font-bold text-primary-black text-right">{formData.date}</span>
+                  </div>
+                  <div className="flex justify-between items-start gap-4">
+                    <span className="text-[10px] uppercase tracking-[0.3em] font-bold text-medium-gray shrink-0">{t('booking_confirm_package')}</span>
+                    <span className="text-sm font-bold text-primary-black text-right">
+                      {selectedPackage ? `${selectedPackage.group} — ${selectedPackage.label} (${selectedPackage.price})` : '-'}
+                    </span>
+                  </div>
+                  {formData.notes && (
+                    <div className="flex justify-between items-start gap-4">
+                      <span className="text-[10px] uppercase tracking-[0.3em] font-bold text-medium-gray shrink-0">{t('booking_confirm_notes')}</span>
+                      <span className="text-sm font-bold text-primary-black text-right">{formData.notes}</span>
+                    </div>
+                  )}
+                </div>
+                <div className="flex flex-col gap-3">
+                  <button
+                    onClick={submitBooking}
+                    disabled={isSubmitting}
+                    className="w-full bg-primary-black text-pure-white py-4 uppercase tracking-[0.2em] text-xs font-bold hover:bg-medium-gray transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="animate-spin" size={16} />
+                        {t('booking_processing')}
+                      </>
+                    ) : (
+                      t('booking_confirm_submit')
+                    )}
+                  </button>
+                  <button
+                    onClick={() => setShowConfirmation(false)}
+                    className="w-full border border-primary-black text-primary-black py-4 uppercase tracking-[0.2em] text-xs font-bold hover:bg-primary-black hover:text-pure-white transition-colors duration-300"
+                  >
+                    {t('booking_confirm_cancel')}
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
         )}
       </AnimatePresence>
       <div className="container-custom">

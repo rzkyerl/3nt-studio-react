@@ -2,7 +2,7 @@ export const translations: Record<string, Record<string, string>> = {
   en: {
     // ─── Navbar ───────────────────────────────────────────────
     nav_home: 'Home',
-    nav_portfolio: 'Portfolio',
+    nav_portfolio: 'Gallery',
     nav_services: 'Services',
     nav_location: 'Location',
     nav_booking: 'Booking',
@@ -31,8 +31,8 @@ export const translations: Record<string, Record<string, string>> = {
     services_label: 'What We Do',
     services_subtitle: 'We provide complete production support for events, brands, and live experiences.',
     services_preview: 'Service Preview',
-    svc_event_title: 'Event Production',
-    svc_event_desc: 'End-to-end production solutions for your biggest moments.',
+    svc_event_title: 'Multicam Production',
+    svc_event_desc: 'End-to-end multicam production solutions for your biggest moments.',
     svc_photobooth_title: 'Photobooth Experience',
     svc_photobooth_desc: 'High-end photo booth systems for engaging events.',
     svc_documentation_title: 'Documentation',
@@ -91,6 +91,16 @@ export const translations: Record<string, Record<string, string>> = {
     booking_guide_step4_desc: 'After submitting, admin will contact you via WhatsApp for confirmation.',
     booking_captcha_required: 'Please verify that you are not a robot first.',
     booking_general_error: 'An error occurred, please try again.',
+    booking_confirm_title: 'Confirm Booking Data',
+    booking_confirm_subtitle: 'Please make sure the data you entered is correct',
+    booking_confirm_name: 'Name',
+    booking_confirm_phone: 'Phone',
+    booking_confirm_address: 'Address',
+    booking_confirm_date: 'Date',
+    booking_confirm_package: 'Package',
+    booking_confirm_notes: 'Notes',
+    booking_confirm_submit: 'Submit Booking',
+    booking_confirm_cancel: 'Cancel',
 
     // ─── Pricing / Services Page ──────────────────────────────
     pricing_hero_subtitle: 'Production for Wedding, Corporate, Concert & Live Streaming',
@@ -124,7 +134,7 @@ export const translations: Record<string, Record<string, string>> = {
   id: {
     // ─── Navbar ───────────────────────────────────────────────
     nav_home: 'Beranda',
-    nav_portfolio: 'Portofolio',
+    nav_portfolio: 'Galeri',
     nav_services: 'Layanan',
     nav_location: 'Lokasi',
     nav_booking: 'Pemesanan',
@@ -153,8 +163,8 @@ export const translations: Record<string, Record<string, string>> = {
     services_label: 'Apa Yang Kami Lakukan',
     services_subtitle: 'Kami menyediakan dukungan produksi lengkap untuk acara, brand, dan pengalaman live.',
     services_preview: 'Pratinjau Layanan',
-    svc_event_title: 'Produksi Acara',
-    svc_event_desc: 'Solusi produksi menyeluruh untuk momen terbesar Anda.',
+    svc_event_title: 'Produksi Multicam',
+    svc_event_desc: 'Solusi produksi multicam menyeluruh untuk momen terbesar Anda.',
     svc_photobooth_title: 'Pengalaman Photobooth',
     svc_photobooth_desc: 'Sistem photo booth premium untuk acara yang berkesan.',
     svc_documentation_title: 'Dokumentasi',
@@ -213,6 +223,16 @@ export const translations: Record<string, Record<string, string>> = {
     booking_guide_step4_desc: 'Setelah submit, admin akan menghubungi Anda via WhatsApp untuk konfirmasi.',
     booking_captcha_required: 'Silakan verifikasi bahwa Anda bukan robot terlebih dahulu.',
     booking_general_error: 'Terjadi kesalahan, silakan coba lagi.',
+    booking_confirm_title: 'Konfirmasi Data Booking',
+    booking_confirm_subtitle: 'Pastikan data yang Anda isi sudah benar',
+    booking_confirm_name: 'Nama',
+    booking_confirm_phone: 'Telepon',
+    booking_confirm_address: 'Alamat',
+    booking_confirm_date: 'Tanggal',
+    booking_confirm_package: 'Paket',
+    booking_confirm_notes: 'Catatan',
+    booking_confirm_submit: 'Submit Booking',
+    booking_confirm_cancel: 'Batal',
 
     // ─── Pricing / Services Page ──────────────────────────────
     pricing_hero_subtitle: 'Produksi untuk Pernikahan, Korporat, Konser & Live Streaming',

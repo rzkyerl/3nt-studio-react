@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Download, RefreshCw, Palette, Calendar, Share2, Filter } from 'lucide-react';
+import { Download, RefreshCw, Palette, Calendar, Share2, Filter, RotateCcw } from 'lucide-react';
 import { cn } from '../../../lib/utils';
 import logoBlack from '../../../assets/Photo/logo-black.webp';
 import logoWhite from '../../../assets/Photo/logo-white.webp';
@@ -49,6 +49,7 @@ export const Photobooth = () => {
   const [countdown, setCountdown] = useState<number | null>(null);
   const [isCapturing, setIsCapturing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [facingMode, setFacingMode] = useState<'user' | 'environment'>('user');
   const streamRef = useRef<MediaStream | null>(null);
   
   // Customization States
@@ -66,23 +67,31 @@ export const Photobooth = () => {
     return 4;
   };
 
-  const startCamera = async () => {
+  const startCamera = async (mode?: 'user' | 'environment') => {
+    const cameraMode = mode || facingMode;
     try {
+      stopCamera();
       const stream = await navigator.mediaDevices.getUserMedia({ 
         video: { 
-          facingMode: 'user',
+          facingMode: cameraMode,
           aspectRatio: 3/4,
           width: { ideal: 1080 },
           height: { ideal: 1440 }
         } 
       });
       streamRef.current = stream;
+      setFacingMode(cameraMode);
       setError(null);
       setState('CAMERA');
     } catch (err) {
       console.error("Error accessing camera:", err);
       setError("Unable to access camera. Please check permissions.");
     }
+  };
+
+  const switchCamera = () => {
+    const newMode = facingMode === 'user' ? 'environment' : 'user';
+    startCamera(newMode);
   };
 
   const stopCamera = () => {
@@ -122,17 +131,21 @@ export const Photobooth = () => {
           offsetY = (sourceHeight - drawHeight) / 2;
         }
 
-        // Mirror the image horizontally to match the live preview
+        // Mirror only for user facing (front) camera
         context.save();
-        context.scale(-1, 1);
-        context.drawImage(video, offsetX, offsetY, drawWidth, drawHeight, -canvas.width, 0, canvas.width, canvas.height);
+        if (facingMode === 'user') {
+          context.scale(-1, 1);
+          context.drawImage(video, offsetX, offsetY, drawWidth, drawHeight, -canvas.width, 0, canvas.width, canvas.height);
+        } else {
+          context.drawImage(video, offsetX, offsetY, drawWidth, drawHeight, 0, 0, canvas.width, canvas.height);
+        }
         context.restore();
 
         return canvas.toDataURL('image/png');
       }
     }
     return null;
-  }, []);
+  }, [facingMode]);
 
   const handleCapture = useCallback(async () => {
     if (isCapturing) return;
@@ -403,7 +416,7 @@ export const Photobooth = () => {
 
               <div className="flex flex-col items-center gap-8">
                 <button 
-                  onClick={startCamera}
+                  onClick={() => startCamera()}
                   className="px-16 py-6 bg-white text-black font-bold uppercase tracking-[0.2em] text-sm hover:bg-medium-gray transition-colors"
                 >
                   Start Camera
@@ -440,8 +453,15 @@ export const Photobooth = () => {
                   autoPlay 
                   playsInline 
                   muted
-                  className="w-full h-full object-cover mirror"
+                  className={cn("w-full h-full object-cover", facingMode === 'user' && "mirror")}
                 />
+                {/* Switch Camera Button - Only on Mobile */}
+                <button
+                  onClick={switchCamera}
+                  className="absolute top-6 right-6 z-30 p-3 bg-black/50 backdrop-blur-md rounded-full border border-white/20 text-white hover:bg-white hover:text-black transition-all duration-300 md:hidden"
+                >
+                  <RotateCcw size={24} />
+                </button>
                 
                 {/* Countdown Overlay */}
                 <AnimatePresence>
